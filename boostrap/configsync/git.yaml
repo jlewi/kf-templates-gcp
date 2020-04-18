@@ -1,0 +1,15 @@
+apiVersion: cnrm.cloud.google.com/v1alpha1
+kind: CloudService
+metadata:
+  name: sourcerepo.googleapis.com
+  namespace: root-270714
+spec:
+  service: sourcerepo.googleapis.com
+
+---
+  
+apiVersion: cnrm.cloud.google.com/v1alpha2
+kind: SourceRepo
+metadata:
+  name: management-root
+  namespace: root-270714

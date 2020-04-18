@@ -1,0 +1,4 @@
+bases:
+- nomos/
+- nomos-instance.yaml
+- git.yaml
