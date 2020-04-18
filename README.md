@@ -87,14 +87,53 @@ Install ASM on the newly created kubeflow cluster `CLUSTER_NAME`
       available immediately after enabling the previous service.
 
 
-* Install the ISTIO operator
+* Install the ISTIO operator by following the [istioctl instructions](https://github.com/kubeflow/manifests/tree/master/gcp/v2#step-2-install-asm)
 
-  ```
-  anthoscli apply -f v2/asm/istio-operator.yaml
-  ```
+  
+  * TODO(jlewi): Using anthoscli isn't working yet. Looks like export subcommand isn't available yet.
+
+    ```
+    anthoscli apply -f v2/asm/istio-operator.yaml
+    ```
 
   * TODO(jlewi): It looks like the operator might be a little behind the latest ASM configs
     https://github.com/GoogleCloudPlatform/anthos-service-mesh-packages/blob/master/asm/cluster/istio-operator.yaml
 
     * TODO(jlewi): Right now asm is a submodule but we are still using the ISTIO operator in the KF manifests repository.
     * We use asm submodule to enable the services
+
+## Install Kubeflow
+
+TODO(jlewi): Need to change this to use v3 style manifests
+
+1. Configure kfdef
+
+   ```
+   kpt cfg set kfctl_gcp_asm_exp.yaml name ${CLUSTER_NAME}
+   kpt cfg set kfctl_gcp_asm_exp.yaml gcloud.core.project ${PROJECT}
+   kpt cfg set kfctl_gcp_asm_exp.yaml zone ${ZONE}
+   kpt cfg set kfctl_gcp_asm_exp.yaml email ${EMAIL}
+   ```
+
+   * Name must be the same value as the name you gave the cluster in the previous step
+
+1. Delete the existing directories to force a regeneration of the config
+
+   ```
+   ```
+
+   * TODO(jlewi): This is hacky; need to clean this up.
+
+
+1. Set environmetn variables with OAuth Client ID and Secret for IAP
+
+   ```
+   export CLIENT_ID=
+   export CLIENT_SECRET=
+   ```
+
+1. Build the manifests
+
+   ```
+   kfctl build -V -f kfctl_gcp_asm_exp.yaml
+   ```
