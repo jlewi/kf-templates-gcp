@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  minioPd: jl-stack-0409-204015-storage-artifact-store
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: minio-config

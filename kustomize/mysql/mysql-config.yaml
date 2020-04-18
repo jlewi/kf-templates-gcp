@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  mysqlPd: jl-stack-0409-204015-storage-metadata-store
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: mysql-config
