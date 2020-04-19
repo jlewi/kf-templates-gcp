@@ -1,0 +1,16 @@
+apiVersion: v1
+data:
+  appName: kf-kcc-0415-001
+  hostname: kf-kcc-0415-001.endpoints.jlewi-dev.cloud.goog
+  ingressName: envoy-ingress
+  ipName: kf-kcc-0415-001-ip
+  istioNamespace: istio-system
+  oauthSecretName: kubeflow-oauth
+  project: jlewi-dev
+  tlsSecretName: envoy-ingress-tls
+kind: ConfigMap
+metadata:
+  labels:
+    kustomize.component: iap-ingress
+  name: iap-ingress-config-5bchhb8t6c
+  namespace: istio-system

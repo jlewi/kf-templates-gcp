@@ -32,11 +32,14 @@ TODO(jlewi): Add instructions
 
 ## Create the Kubeflow GCP resources
 
-1. Configure the KCC manifests for Kubeflow
- 
+1. TODO(jlewi): We need to annotate all the configmap patches with kpt setter commands
+
    ```
-   cd manifests gcp/v2
+   kpt cfg set ./kustomize gcloud.core.project $(gcloud config get-value project)
+   kpt cfg set ./kustomize name ${NAME}
    ```
+
+   * Name should be the name for the kubeflow deployment; it should match the name given to all the KCC resources.
 
 1. Set zone and name
    
@@ -44,6 +47,15 @@ TODO(jlewi): Add instructions
    kpt cfg set v2 gcloud.core.project $(gcloud config get-value project)
    kpt cfg set v2 cluster-name $(CLUSTER_NAME)
    kpt cfg set v2 gcloud.compute.zone $(gcloud config get-value compute/zone)
+   ```
+
+   * TODO(jlewi): This won't work. kfctl isn't compatible with kpt setters because comments get stripped out when kfctl overwrites the files. 
+
+
+1. Hydrate the manifests
+
+   ```
+   make hydrate
    ```
 
 1. Connect kubectl to the management cluster
