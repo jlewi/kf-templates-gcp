@@ -147,5 +147,17 @@ TODO(jlewi): Need to change this to use v3 style manifests
 1. Build the manifests
 
    ```
-   kfctl build -V -f kfctl_gcp_asm_exp.yaml
+   make hydrate
+   ```
+
+1. Apply the manifests
+
+   ```
+   make apply
+   ```
+
+1. Create the IAP secret
+
+   ```
+   make iap-secret
    ```

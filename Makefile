@@ -40,3 +40,7 @@ hydrate:
 	mkdir -p .build/metacontroller
 	kustomize build --load_restrictor none -o .build/metacontroller kustomize/metacontroller
 	
+# Create the iap secret from environment variables
+.PHONY: iap-secret
+iap-secret:
+	kubectl -n istio-system create secret generic kubeflow-oauth --from-literal=client_id=${CLIENT_ID} --from-literal=client_secret=${CLIENT_SECRET}
