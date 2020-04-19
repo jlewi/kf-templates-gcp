@@ -5,3 +5,4 @@ patchesStrategicMerge:
 - service-accounts.yaml
 resources:
 - ../../manifests/gcp/iap-ingress/v3
+- ../../manifests/istio/iap-gateway/base
