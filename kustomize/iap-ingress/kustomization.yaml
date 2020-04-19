@@ -3,4 +3,4 @@ kind: Kustomization
 patchesStrategicMerge:
 - iap-ingress-config.yaml
 resources:
-- ../../.cache/manifests/gcp/iap-ingress/v3
+- ../../manifests/gcp/iap-ingress/v3

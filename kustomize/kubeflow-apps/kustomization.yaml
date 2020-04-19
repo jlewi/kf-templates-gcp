@@ -4,4 +4,4 @@ patchesStrategicMerge:
 - profiles-config.yaml
 - default-install-config.yaml
 resources:
-- ../../.cache/manifests/stacks/gcp
+- ../../manifests/stacks/gcp
