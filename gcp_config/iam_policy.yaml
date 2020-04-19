@@ -3,16 +3,17 @@
 ---
 
 # kf-admin binding in namespace kubeflow
-apiVersion: iam.cnrm.cloud.google.com/v1alpha1
-kind: IAMPolicy
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
 metadata:
-  name: kf-kcc-0415-0010-admin-wi # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-kcc-0415-001"},{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
+  name: kf-kcc-0415-001-admin-wi # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-kcc-0415-001"},{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
 spec:
   resourceRef:
-    apiVersion: iam.cnrm.cloud.google.com/v1alpha1
+    apiVersion: iam.cnrm.cloud.google.com/v1beta1
     kind: IAMServiceAccount
-    name: cnrm-controller-manager
-  bindings:
-    - role: roles/iam.workloadIdentityUser
-      members:
-      - serviceAccount: jlewi-dev.svc.id.goog[kubeflow/kf-admin] # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
+    name: kf-kcc-0415-001-admin # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-kcc-0415-001"},{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
+  member: serviceAccount:jlewi-dev.svc.id.goog[kubeflow/kf-admin] # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
+  role: roles/iam.workloadIdentityUser
+
+---
+

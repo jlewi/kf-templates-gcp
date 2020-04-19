@@ -1,0 +1,12 @@
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeAddress
+metadata:
+  labels:
+    label-one: value-one
+  name: kf-kcc-0415-001-ip
+  namespace: jlewi-dev
+spec:
+  addressType: EXTERNAL
+  description: Static IP for Kubeflow ingress.
+  ipVersion: IPV4
+  location: global
