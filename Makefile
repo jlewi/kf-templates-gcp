@@ -4,6 +4,8 @@ MGMTCTXT=gke_jlewi-dev_us-central1-f_jlewi-management
 KFCTXT=gke_jlewi-dev_us-east1-d_kf-kcc-0415-001
 
 # TODO(jlewi): If we use prune does that give us a complete upgrade solution?
+# TODO(jlewi): Should we insert appropriate wait statements to wait for various services to
+# be available before continuing?
 .PHONY: apply
 apply: hydrate
 	# Apply management resources
