@@ -1,0 +1,24 @@
+apiVersion: container.cnrm.cloud.google.com/v1beta1
+kind: ContainerCluster
+metadata:
+  clusterName: jlewi-dev/us-east1-d/kf-kcc-0415-001
+  labels:
+    mesh_id: jlewi-dev_us-east1-d_kf-kcc-0415-001
+  name: kf-kcc-0415-001
+  namespace: jlewi-dev
+spec:
+  initialNodeCount: 2
+  location: us-east1-d
+  loggingService: logging.googleapis.com/kubernetes
+  minMasterVersion: 1.14.10-gke.36
+  monitoringService: monitoring.googleapis.com/kubernetes
+  nodeConfig:
+    machineType: n1-standard-8
+    metadata:
+      disable-legacy-endpoints: "true"
+    serviceAccountRef:
+      name: kf-kcc-0415-001-vm
+    workloadMetadataConfig:
+      nodeMetadata: GKE_METADATA_SERVER
+  workloadIdentityConfig:
+    identityNamespace: jlewi-dev.svc.id.goog

@@ -9,6 +9,7 @@ metadata:
     app.kubernetes.io/part-of: kubeflow
     app.kubernetes.io/version: v0.7.0
   name: cloud-endpoints
+  namespace: kubeflow
 spec:
   addOwnerRef: true
   componentKinds:

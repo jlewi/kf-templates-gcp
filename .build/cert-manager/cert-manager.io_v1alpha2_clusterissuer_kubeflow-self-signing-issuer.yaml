@@ -10,5 +10,6 @@ metadata:
     app.kubernetes.io/version: v0.7.0
     kustomize.component: cert-manager
   name: kubeflow-self-signing-issuer
+  namespace: cert-manager
 spec:
   selfSigned: {}

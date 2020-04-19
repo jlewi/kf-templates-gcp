@@ -1,0 +1,11 @@
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: kf-kcc-0415-001-vm-policy-monitoring
+spec:
+  member: serviceAccount:kf-kcc-0415-001-vm@jlewi-dev.iam.gserviceaccount.com
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    external: projects/jlewi-dev
+    kind: Project
+  role: roles/monitoring.metricWriter

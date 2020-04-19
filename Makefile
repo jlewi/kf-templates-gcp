@@ -1,25 +1,44 @@
-# This just applies Kubeflow applications
+# The name of the context for the management cluster
+MGMTCTXT=gke_jlewi-dev_us-central1-f_jlewi-management
+# The name of the context for your Kubeflow cluster
+KFCTXT=gke_jlewi-dev_us-east1-d_kf-kcc-0415-001
+
+# TODO(jlewi): If we use prune does that give us a complete upgrade solution?
 .PHONY: apply
 apply: hydrate
-	kubectl apply -f ./.build/namespaces.yaml
-	kubectl apply -f ./.build/kubeflow-istio
-	kubectl apply -f ./.build/metacontroller
-	kubectl apply -f ./.build/application
-	kubectl apply -f ./.build/cloud-endpoints
-	kubectl apply -f ./.build/iap-ingress
+	# Apply management resources
+	kubectl --context=$(MGMTCTXT) apply -f ./.build/gcp_config
+
+	# Apply kubeflow apps
+	kubectl --context=$(KFCTXT) apply -f ./.build/namespaces.yaml
+	kubectl --context=$(KFCTXT) apply -f ./.build/kubeflow-istio
+	kubectl --context=$(KFCTXT) apply -f ./.build/metacontroller
+	kubectl --context=$(KFCTXT) apply -f ./.build/application
+	kubectl --context=$(KFCTXT) apply -f ./.build/cloud-endpoints
+	kubectl --context=$(KFCTXT) apply -f ./.build/iap-ingress
 	# Due to https://github.com/jetstack/cert-manager/issues/2208
 	# We need to skip validation on Kubernetes 1.14
-	kubectl apply --validate=false -f ./.build/cert-manager-crds
-	kubectl apply -f ./.build/cert-manager-kube-system-resources	
-	kubectl apply -f ./.build/cert-manager
-	kubectl apply -f ./.build/kubeflow-apps
+	kubectl --context=$(KFCTXT) apply --validate=false -f ./.build/cert-manager-crds
+	kubectl --context=$(KFCTXT) apply -f ./.build/cert-manager-kube-system-resources	
+	kubectl --context=$(KFCTXT) apply -f ./.build/cert-manager
+	kubectl --context=$(KFCTXT) apply -f ./.build/kubeflow-apps
 
 # Hydrate all the application directories directories
 # TODO(jlewi): We can't use a kustomization file to combine the top level packages
 # because they might get vars conflicts. Also order is important when applying them.
 .PHONY: hydrate
 hydrate:
+	# Delete build because we want to prune any resources which are no longer defined in the manifests
+	rm -rf .build
 	mkdir -p .build/
+
+	# ***********************************************************************************
+	# Hydrate cnrm
+	mkdir -p .build/gcp_config 
+	kustomize build -o .build/gcp_config gcp_config
+
+	#***********************************************************************************
+	# Hydrate kubeflow applications
 	cp -f ./kustomize/namespaces.yaml ./.build/
 	mkdir -p .build/application
 	kustomize build --load_restrictor none -o .build/application kustomize/application
