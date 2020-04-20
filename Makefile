@@ -1,5 +1,5 @@
-# The name of the context for the management cluster
-MGMTCTXT=gke_jlewi-dev_us-central1-f_jlewi-management
+# The kname of the context for the management cluster
+MGMTCTXT=gke_jlewi-dev_us-central1_jlewi-mgmt-0420
 # The name of the context for your Kubeflow cluster
 KFCTXT=gke_jlewi-dev_us-east1-d_kf-kcc-0415-001
 

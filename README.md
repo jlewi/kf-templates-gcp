@@ -26,10 +26,131 @@ gcloud components install kpt anthoscli beta
 gcloud components update
 ```
 
+## Clone the Blueprint
+
+1. Clone the blueprint
+
+   ```
+   git clone https://github.com/jlewi/kf-templates-gcp.git ${REPO}
+   ```
+
+1. Initialize the submodules
+
+   ```
+   git submodule init
+   git submodule update
+   ```
+
 ## Setting up the management cluster
 
-TODO(jlewi): Add instructions
+The management cluster is a GKE cluster running [Config Connector](https://cloud.google.com/config-connector/docs/how-to/getting-started).
+The management cluster should be configured in namespace mode so there is a different namespace for each GCP project
+under management. 
 
+If you already have a management cluster you can skip this step. Otherwise follow these instructions to setup the management cluster.
+
+
+1. Set the name for the management resources in the base kustomize package
+
+   ```
+   cd ${REPO}/manifests/gcp/v2/management/
+   
+   kpt cfg set . cluster-name $(MGMT_NAME)   
+   ```
+
+1. Set the same names in the kustomize package defining overlays
+
+   ```
+   cd ${REPO}/management
+   
+   kpt cfg set . cluster-name $(MGMT_NAME)   
+   kpt cfg set . gcloud.compute.zone $(MGMT_ZONE)
+   kpt cfg set . gcloud.core.project $(MGMT_PROJECT)   
+   ```
+
+   * This directory defines kustomize overlays applied to `manifests/gcp/v2/management`
+
+   * The names of the CNRM resources need to be set in both the base 
+     package and the overlays
+
+1. Hydrate and apply the manifests to create the cluster
+
+   ```
+   make apply
+   ```
+
+1. Create a kubeconfig context for the cluster
+
+   ```
+   gcloud --project=${PROJECT} container clusters get-credentials --region=${REGION} ${MGMT_ZONE}
+   ```
+
+1. Get the current context
+
+   ```
+   kubectl config current-context
+   ```
+
+1. Set MGMTCTXT in the Makefiles
+
+1. Install the CNRM system components
+
+   ```
+   make install-kcc
+   ```
+
+### Setup KCC Namespace For Each Project
+
+You will configure Config Connector in [Namespaced Mode](https://cloud.google.com/config-connector/docs/concepts/installation-types#namespaced_mode). This means
+
+* There will be a separate namespace for each GCP project under management
+* CNRM resources will be created in the namespace matching the GCP project
+  in which the resource lives.
+* There will be multiple instances of the CNRM controller each managing
+  resources in a different namespace
+* Each CNRM controller can use a different K8s account which can be bound
+  through workload identity to a different GCP Service Account with permissions to manage the project
+
+For each project you want to setup follow the instructions below.
+
+1. Create a copy of the per namespace/project resources
+
+   ```
+   cp -r ../manifests/gcp/v2/management/cnrm-install/install-per-namespace ./management/cnrm-install-${PROJECT}
+   ```
+1. Set the project to be mananged
+
+   ```
+   kpt cfg set cnrm-install-jlewi-dev managed_project ${MANAGED_PROJECT}
+   ```
+
+1. Set the host project where kcc is running
+
+   ```
+   kpt cfg set cnrm-install-jlewi-dev host_project ${HOST_PROJECT}
+   ```
+
+1. Apply this manifest to the mgmt cluster
+
+
+   ```
+   kubectl --context=$(MGMTCTXT) apply -f ./management/cnrm-install-${PROJECT}/per-namespace-components.yaml
+   ```
+
+1. Create the GSA and workload identity binding
+
+   ```
+   anthoscli apply --project=${MANAGED_PROJECt} -f service_account.yaml
+   ```
+
+1. anthoscli doesn't support IAMPolicyMember resources yet so we use this as a workaround
+   to make the newly created GSA an owner of the hosted project
+
+   ```
+   gcloud projects add-iam-policy-binding ${MANAGED_PROJECT} \
+    --member=serviceAccount:cnrm-system-${MANAGED_PROJECT}@${MANAGED_PROJECT}.iam.gserviceaccount.com  \
+    --role roles/owner
+   ```
 ## Create the Kubeflow GCP resources
 
 1. TODO(jlewi): We need to annotate all the configmap patches with kpt setter commands
@@ -51,6 +172,10 @@ TODO(jlewi): Add instructions
 
    * TODO(jlewi): This won't work. kfctl isn't compatible with kpt setters because comments get stripped out when kfctl overwrites the files. 
 
+1. Edit `Makefile` change the values of `MGMTCTXT` and `KFCTXT` to be the context for the management cluster and Kubeflow cluster
+   respectively.
+
+   * TODO(jlewi): How should users know what to set the context to if their cluster doesn't exist yet?
 
 1. Hydrate the manifests
 
