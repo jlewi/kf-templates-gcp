@@ -1,4 +1,0 @@
-bases:
-- config-management-operator.yaml
-commonAnnotations:
-  gke.io/cluster: gke://root-270714/us-central1-f/management-root
