@@ -8,6 +8,9 @@ apply-gcp: hydrate
 	# Apply management resources
 	kubectl --context=$(MGMTCTXT) apply -f ./.build/gcp_config
 
+apply-asm:
+	istioctl manifest --context=${KFCTXT} apply -f ./manifests/gcp/v2/asm/istio-operator.yaml 
+
 # TODO(jlewi): If we use prune does that give us a complete upgrade solution?
 # TODO(jlewi): Should we insert appropriate wait statements to wait for various services to
 # be available before continuing?

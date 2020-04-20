@@ -198,12 +198,10 @@ TODO(jlewi): Add instructions for deploying using ConfigSync and the management 
 
 ##  Install Anthos Service Mesh(ASM) on the Kubeflow Cluster 
 
-Install ASM on the newly created kubeflow cluster `CLUSTER_NAME`
+Install ASM on the newly created kubeflow cluster `KFNAME`
 
-* Connect kubectl to the new kubeflow cluster `CLUSTER_NAME`
-
-  `gcloud container clusters get-credentials $(CLUSTER_NAME) --zone <> --project <kubeflow-project-id>`
-
+* Connect kubectl to the new kubeflow cluster `KFNAME`
+  
 * [Set credentials and permissions](https://cloud.google.com/service-mesh/docs/gke-install-existing-cluster#set_credentials_and_permissions)
 
 * [Download istioctl released by GCP](https://cloud.google.com/service-mesh/docs/gke-install-existing-cluster#download_the_installation_file)
@@ -211,10 +209,9 @@ Install ASM on the newly created kubeflow cluster `CLUSTER_NAME`
 
 * Enable ASM services
 
-  ```
-  cd ${REPO}/asm/asm
-  kpt cfg set . gcloud.core.project jlewi-dev 
-  anthoscli apply -f ./project
+  ```  
+  kpt cfg set asm/asm gcloud.core.project ${MANAGED_PROJECT}
+  anthoscli apply --project=${MANAGED_PROJECT} -f ./asm/asm/project
   ```
 
   * **Note** If you get errors about services not found; wait an then retry.
@@ -222,7 +219,12 @@ Install ASM on the newly created kubeflow cluster `CLUSTER_NAME`
       available immediately after enabling the previous service.
 
 
-* Install the ISTIO operator by following the [istioctl instructions](https://github.com/kubeflow/manifests/tree/master/gcp/v2#step-2-install-asm)
+* Install the ISTIO operator
+
+  ```
+  make apply-asm
+  ```
+[istioctl instructions](https://github.com/kubeflow/manifests/tree/master/gcp/v2#step-2-install-asm)
 
   
   * TODO(jlewi): Using anthoscli isn't working yet. Looks like export subcommand isn't available yet.
