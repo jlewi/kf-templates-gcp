@@ -1,7 +1,0 @@
-bases:
-- crds.yaml
-- 0-cnrm-system.yaml
-patches:
-- patch-service-account.yaml
-commonAnnotations:
-  gke.io/cluster: gke://root-270714/us-central1-f/management-root
