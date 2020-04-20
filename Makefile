@@ -1,7 +1,12 @@
 # The kname of the context for the management cluster
 MGMTCTXT=gke_jlewi-dev_us-central1_jlewi-mgmt-0420
 # The name of the context for your Kubeflow cluster
-KFCTXT=gke_jlewi-dev_us-east1-d_kf-kcc-0415-001
+KFCTXT=gke_jlewi-dev_us-east1-d_kf-bp-0420-001
+
+.PHONY: hydrate
+apply-gcp: hydrate
+	# Apply management resources
+	kubectl --context=$(MGMTCTXT) apply -f ./.build/gcp_config
 
 # TODO(jlewi): If we use prune does that give us a complete upgrade solution?
 # TODO(jlewi): Should we insert appropriate wait statements to wait for various services to

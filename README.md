@@ -153,50 +153,48 @@ For each project you want to setup follow the instructions below.
    ```
 ## Create the Kubeflow GCP resources
 
-1. TODO(jlewi): We need to annotate all the configmap patches with kpt setter commands
+1. Pick a name for the Kubeflow deployment
 
    ```
-   kpt cfg set ./kustomize gcloud.core.project $(gcloud config get-value project)
-   kpt cfg set ./kustomize name ${NAME}
+   export KFNAME=<some name>
    ```
 
-   * Name should be the name for the kubeflow deployment; it should match the name given to all the KCC resources.
+1. Set the name of all CNRM resources in the base kustomize package
 
-1. Set zone and name
+   ```      
+   kpt cfg set manifests/gcp/v2/cnrm cluster-name ${KFNAME}
+   ```
+
+1. Configure CNRM patches
    
    ```
-   kpt cfg set v2 gcloud.core.project $(gcloud config get-value project)
-   kpt cfg set v2 cluster-name $(CLUSTER_NAME)
-   kpt cfg set v2 gcloud.compute.zone $(gcloud config get-value compute/zone)
+   kpt cfg set gcp_config gcloud.core.project $(gcloud config get-value project)
+   kpt cfg set gcp_config name ${KFNAME}
    ```
 
-   * TODO(jlewi): This won't work. kfctl isn't compatible with kpt setters because comments get stripped out when kfctl overwrites the files. 
+1. Edit `Makefile` change the values of `MGMTCTXT` to the context for the managmenet cluster
 
-1. Edit `Makefile` change the values of `MGMTCTXT` and `KFCTXT` to be the context for the management cluster and Kubeflow cluster
-   respectively.
 
-   * TODO(jlewi): How should users know what to set the context to if their cluster doesn't exist yet?
-
-1. Hydrate the manifests
+1. Deploy the GCP resources
 
    ```
-   make hydrate
+   make apply-gcp
    ```
 
-1. Connect kubectl to the management cluster
+1. Wait for the GKE cluster to be available
 
- 
-   ```
-   gcloud container clusters get-credentials <cluster-name> --zone <> --project <kcc-host-project-id>
-   ```
-
-1. Create the resources.
+1. Create a kubectl config context for the cluster
 
    ```
-   kustomize build v2/cnrm | kubectl apply -n <kubeflow-project-id> -f -
+   gcloud --project=${MANAGED_PROJECT} container clusters get-credentials --zone=${ZONE} ${KFNAME}
    ```
 
-   * TODO(jlewi): Add instructions for deploying using ConfigSync and the management cluster
+1. Edit the Makefile set `KFCTXT` to the context for the KF cluster. You can get the context by running
+
+   ```
+   kubectl config current-context
+   ```
+TODO(jlewi): Add instructions for deploying using ConfigSync and the management cluster
 
 ##  Install Anthos Service Mesh(ASM) on the Kubeflow Cluster 
 
