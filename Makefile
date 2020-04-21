@@ -1,7 +1,16 @@
 # The kname of the context for the management cluster
-MGMTCTXT=gke_jlewi-dev_us-central1_jlewi-mgmt-0420
+# These can be read using yq from the settings file.
+#
+# If you don't have yq 
+MGMTCTXT=$(shell yq r settings.yaml mgmt-ctxt)
 # The name of the context for your Kubeflow cluster
-KFCTXT=gke_jlewi-dev_us-east1-d_kf-bp-0420-001
+KFCTXT=$(shell yq r settings.yaml kf-ctxt)
+
+# Print out the context
+.PHONY: echo
+echo-ctxt:
+	@echo MGMTCTXT=$(MGMTCTXT)
+	@echo KFCTXT=$(KFCTXT)
 
 .PHONY: hydrate
 apply-gcp: hydrate
@@ -9,7 +18,10 @@ apply-gcp: hydrate
 	kubectl --context=$(MGMTCTXT) apply -f ./.build/gcp_config
 
 apply-asm:
+	# TODO(jlewi): Should we use the newer version in asm/asm
 	istioctl manifest --context=${KFCTXT} apply -f ./manifests/gcp/v2/asm/istio-operator.yaml 
+	# TODO(jlewi): Switch to anthoscli once its working
+	#anthoscli apply -f ./manifests/gcp/v2/asm/istio-operator.yaml 
 
 # TODO(jlewi): If we use prune does that give us a complete upgrade solution?
 # TODO(jlewi): Should we insert appropriate wait statements to wait for various services to

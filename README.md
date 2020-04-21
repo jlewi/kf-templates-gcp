@@ -133,7 +133,10 @@ For each project you want to setup follow the instructions below.
 
    ```
    kpt cfg set cnrm-install-jlewi-dev host_project ${HOST_PROJECT}
+   kpt cfg set cnrm-install-jlewi-dev host_id_pool ${HOST_PROJECT}.svc.id.goog
    ```
+
+   * host_id_pool should be the workload identity pool used for the host project
 
 1. Apply this manifest to the mgmt cluster
 
@@ -164,6 +167,21 @@ For each project you want to setup follow the instructions below.
    export KFNAME=<some name>
    ```
 
+1. Pick a location for the Kubeflow deployment
+
+   ```
+   export LOCATION=<zone or region>
+   export ZONE=<zone for disks>
+   ```
+
+   * Location can be a zone or a region depending on whether you want a regional cluster
+   * We recommend creating regional clusters for higher availability
+   * The [cluster management fee](https://cloud.google.com/kubernetes-engine/pricing) is the same for regional
+     and zonal clusters
+
+   * TODO(jlewi): Metadata and Pipelines are still using zonal disks what do we have to do make that work with regional clusters? For metadata
+     we could use CloudSQL.
+
 1. Set the name of all CNRM resources in the base kustomize package
 
    ```      
@@ -173,9 +191,14 @@ For each project you want to setup follow the instructions below.
 1. Configure CNRM patches
    
    ```
-   kpt cfg set gcp_config gcloud.core.project $(gcloud config get-value project)
+   kpt cfg set gcp_config gcloud.core.project ${MANAGED_PROJECT}
    kpt cfg set gcp_config name ${KFNAME}
+   kpt cfg set gcp_config cluster-name ${KFNAME}
+   kpt cfg set gcp_config location ${LOCATION}
+   kpt cfg set gcp_config gcloud.compute.zone ${ZONE}
    ```
+
+   * TODO(jlewi): Should we standardize on name rather than cluster-name?
 
 1. Edit `Makefile` change the values of `MGMTCTXT` to the context for the managmenet cluster
 
@@ -228,7 +251,7 @@ Install ASM on the newly created kubeflow cluster `KFNAME`
   ```
   kpt cfg set manifests/gcp/v2/asm gcloud.core.project ${MANAGED_PROJECT}
   kpt cfg set manifests/gcp/v2/asm cluster-name ${KFNAME}
-  kpt cfg set manifests/gcp/v2/asm gcloud.compute.zone ${ZONE}
+  kpt cfg set manifests/gcp/v2/asm location ${LOCATION}
   ```
 
 * Install the ISTIO operator
@@ -236,21 +259,10 @@ Install ASM on the newly created kubeflow cluster `KFNAME`
   ```
   make apply-asm
   ```
-[istioctl instructions](https://github.com/kubeflow/manifests/tree/master/gcp/v2#step-2-install-asm)
 
-  
-  * TODO(jlewi): We shouldn't need anthoscli export because we can follow the instructions for installing
-    on a newly [created cluster](https://cloud.google.com/service-mesh/docs/gke-install-new-cluster).
-    When we create the cluster we should set all the values appropriately so we don't need to change
-    those values using anthoscli.
-        
-  * TODO(jlewi): Using anthoscli isn't working yet. Looks like export subcommand isn't available yet.
+  * TODO(jlewi): Using anthoscli isn't working yet so we are using istioctl
 
-    ```
-    anthoscli apply -f v2/asm/istio-operator.yaml
-    ```
-
-  * TODO(jlewi): It looks like the operator might be a little behind the latest ASM configs
+  * TODO(jlewi): It looks like the operator config in manifests might be a little behind the latest ASM configs
     https://github.com/GoogleCloudPlatform/anthos-service-mesh-packages/blob/master/asm/cluster/istio-operator.yaml
 
     * TODO(jlewi): Right now asm is a submodule but we are still using the ISTIO operator in the KF manifests repository.

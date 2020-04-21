@@ -1,0 +1,12 @@
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: kf-bp-0420-002-admin-wi
+  namespace: jlewi-dev
+spec:
+  member: serviceAccount:jlewi-dev.svc.id.goog[kubeflow/kf-admin]
+  resourceRef:
+    apiVersion: iam.cnrm.cloud.google.com/v1beta1
+    kind: IAMServiceAccount
+    name: kf-bp-0420-002-admin
+  role: roles/iam.workloadIdentityUser
