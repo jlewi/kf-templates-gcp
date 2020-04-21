@@ -7,4 +7,4 @@ metadata:
   namespace: istio-system
 spec:
   domains:
-  - kf-kcc-0415-001.endpoints.jlewi-dev.cloud.goog
+  - kf-bp-0420-001.endpoints.jlewi-dev.cloud.goog

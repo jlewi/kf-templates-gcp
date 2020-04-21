@@ -19,6 +19,11 @@ Kubeflow is deployed as follows
   * **caveat** For kustomize to work with KCC the names of the resources must be the same.
     So we need to use kpt to modify the names of the resources in **manifests**
 
+TODO:
+
+ * I think when we create the cluster we need to set the [ASM mesh labels](https://cloud.google.com/service-mesh/docs/gke-install-new-cluster)
+ * I think we need our GKE clusters to be in a release channel rather than pinning to a specific GKE version.
+
 ## Install the required tools
 
 ```
@@ -218,6 +223,13 @@ Install ASM on the newly created kubeflow cluster `KFNAME`
     * It looks like some of the services require sequential activation and they aren't
       available immediately after enabling the previous service.
 
+* Configure ASM
+
+  ```
+  kpt cfg set manifests/gcp/v2/asm gcloud.core.project ${MANAGED_PROJECT}
+  kpt cfg set manifests/gcp/v2/asm cluster-name ${KFNAME}
+  kpt cfg set manifests/gcp/v2/asm gcloud.compute.zone ${ZONE}
+  ```
 
 * Install the ISTIO operator
 
@@ -227,6 +239,11 @@ Install ASM on the newly created kubeflow cluster `KFNAME`
 [istioctl instructions](https://github.com/kubeflow/manifests/tree/master/gcp/v2#step-2-install-asm)
 
   
+  * TODO(jlewi): We shouldn't need anthoscli export because we can follow the instructions for installing
+    on a newly [created cluster](https://cloud.google.com/service-mesh/docs/gke-install-new-cluster).
+    When we create the cluster we should set all the values appropriately so we don't need to change
+    those values using anthoscli.
+        
   * TODO(jlewi): Using anthoscli isn't working yet. Looks like export subcommand isn't available yet.
 
     ```
@@ -239,36 +256,14 @@ Install ASM on the newly created kubeflow cluster `KFNAME`
     * TODO(jlewi): Right now asm is a submodule but we are still using the ISTIO operator in the KF manifests repository.
     * We use asm submodule to enable the services
 
-## Install Kubeflow
+## Install Kubeflow Applications
 
-TODO(jlewi): Need to change this to use v3 style manifests
-
-1. Configure kfdef
+1. Configure the Kubeflow applications
 
    ```
-   kpt cfg set kfctl_gcp_asm_exp.yaml name ${CLUSTER_NAME}
-   kpt cfg set kfctl_gcp_asm_exp.yaml gcloud.core.project ${PROJECT}
-   kpt cfg set kfctl_gcp_asm_exp.yaml zone ${ZONE}
-   kpt cfg set kfctl_gcp_asm_exp.yaml email ${EMAIL}
+   kpt cfg set kustomize gcloud.core.project ${MANAGED_PROJECT}
+   kpt cfg set kustomize name ${KFNAME}
    ```
-
-   * Name must be the same value as the name you gave the cluster in the previous step
-
-1. Delete the existing directories to force a regeneration of the config
-
-   ```
-   ```
-
-   * TODO(jlewi): This is hacky; need to clean this up.
-
-
-1. Set environmetn variables with OAuth Client ID and Secret for IAP
-
-   ```
-   export CLIENT_ID=
-   export CLIENT_SECRET=
-   ```
-
 1. Build the manifests
 
    ```
@@ -280,6 +275,15 @@ TODO(jlewi): Need to change this to use v3 style manifests
    ```
    make apply
    ```
+
+1. Set environment variables with OAuth Client ID and Secret for IAP
+
+   ```
+   export CLIENT_ID=
+   export CLIENT_SECRET=
+   ```
+
+   * TODO(jlewi): Add link for instructions on creating an OAuth client id
 
 1. Create the IAP secret
 

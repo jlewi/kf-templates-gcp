@@ -1,8 +1,8 @@
 apiVersion: v1
 data:
-  appName: kf-kcc-0415-001 # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-kcc-0415-001"}]}}
-  hostname: kf-kcc-0415-001.endpoints.jlewi-dev.cloud.goog # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-kcc-0415-001"},{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
-  ipName: kf-kcc-0415-001-ip # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-kcc-0415-001"}]}}
+  appName: kf-bp-0420-001 # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-bp-0420-001"}]}}
+  hostname: kf-bp-0420-001.endpoints.jlewi-dev.cloud.goog # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-bp-0420-001"},{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
+  ipName: kf-bp-0420-001-ip # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-bp-0420-001"}]}}
   project: "jlewi-dev" # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.core.project","value":"jlewi-dev"}}}
 kind: ConfigMap
 metadata:

@@ -5,9 +5,7 @@ metadata:
   labels:
     control-plane: kubeflow
     katib-metricscollector-injection: enabled
-
 ---
-
 # TODO(jlewi): This is also defined in the cert-manager package but it doesn't get
 # created in the right order.
 apiVersion: v1
