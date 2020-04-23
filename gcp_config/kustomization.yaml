@@ -5,6 +5,8 @@ kind: Kustomization
 # namespace should match the project.
 # This assumes we are running CNRM in namespace mode and namespaces match project names.
 namespace: jlewi-dev # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
+commonLabels:
+  kubeflow.org.name: jlewi-dev
 resources:
 - ../manifests/gcp/v2/cnrm
 - iam_policy.yaml
