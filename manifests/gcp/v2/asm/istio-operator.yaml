@@ -15,7 +15,7 @@
 apiVersion: install.istio.io/v1alpha2
 kind: IstioControlPlane
 metadata:
-  clusterName: "jlewi-dev/us-central1/kf-2020-0423-001" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"cluster-name","value":"kf-2020-0423-001"},{"name":"location","value":"us-central1"}]}}
+  clusterName: "jlewi-dev/us-central1/kf-2020-0423-002" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"cluster-name","value":"kf-2020-0423-002"},{"name":"location","value":"us-central1"}]}}
 spec:
   profile: asm
   hub: gcr.io/asm-testing
@@ -25,11 +25,11 @@ spec:
       istio-ingressgateway:
         type: NodePort
     global:
-      meshID: "jlewi-dev_us-central1_kf-2020-0423-001" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"cluster-name","value":"kf-2020-0423-001"},{"name":"location","value":"us-central1"}]}}
+      meshID: "jlewi-dev_us-central1_kf-2020-0423-002" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"cluster-name","value":"kf-2020-0423-002"},{"name":"location","value":"us-central1"}]}}
       trustDomain: "jlewi-dev.svc.id.goog" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
       sds:
         token:
           aud: "jlewi-dev.svc.id.goog" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
     nodeagent:
       env:
-        GKE_CLUSTER_URL: "https://container.googleapis.com/v1/projects/jlewi-dev/locations/us-central1/clusters/kf-2020-0423-001" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"cluster-name","value":"kf-2020-0423-001"},{"name":"location","value":"us-central1"}]}}
+        GKE_CLUSTER_URL: "https://container.googleapis.com/v1/projects/jlewi-dev/locations/us-central1/clusters/kf-2020-0423-002" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"cluster-name","value":"kf-2020-0423-002"},{"name":"location","value":"us-central1"}]}}

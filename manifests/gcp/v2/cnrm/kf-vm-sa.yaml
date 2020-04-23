@@ -15,7 +15,7 @@
 apiVersion: iam.cnrm.cloud.google.com/v1beta1
 kind: IAMServiceAccount
 metadata:
-  name: kf-2020-0423-001-vm # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"cluster-name","value":"kf-2020-0423-001"}]}}
+  name: kf-2020-0423-002-vm # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"cluster-name","value":"kf-2020-0423-002"}]}}
   namespace: "jlewi-dev" # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.core.project","value":"jlewi-dev"}}}
 spec:
   displayName: kubeflow vm service account

@@ -11,20 +11,6 @@ Kubeflow is deployed as follows
 
 * Once the Kubeflow cluster is created we use kustomize to deploy the KF applications on it.
 
-* **manifests** Uses Git submodules to reference the Kubeflow manifests
-
-  * This makes it easy to pull in upgrades just by updating the submodule to point to
-    an updated link.
-
-  * **caveat** For kustomize to work with KCC the names of the resources must be the same.
-    So we need to use kpt to modify the names of the resources in **manifests**
-
-TODO:
-
- * Use kpt packages to pull in upstream packages rather than git submodules?
- * I think when we create the cluster we need to set the [ASM mesh labels](https://cloud.google.com/service-mesh/docs/gke-install-new-cluster)
- * I think we need our GKE clusters to be in a release channel rather than pinning to a specific GKE version.
-
 ## Install the required tools
 
 1. Install gcloud components
@@ -37,14 +23,6 @@ TODO:
 1. Follow these [instructions](https://cloud.google.com/service-mesh/docs/gke-install-new-cluster#download_the_installation_file) to
    install istioctl
 
-## Clone the Blueprint
-
-1. Clone the blueprint
-
-   ```
-   git clone https://github.com/jlewi/kf-templates-gcp.git ${REPO}
-   ```
-
 ## Fetch packages using kpt
 
 ```
@@ -54,131 +32,6 @@ make pkg-get
 
   * This generates an error per [GoogleContainerTools/kpt#539](https://github.com/GoogleContainerTools/kpt/issues/539) but it looks like
     this can be ignored.
-
-## Setting up the management cluster
-
-The management cluster is a GKE cluster running [Config Connector](https://cloud.google.com/config-connector/docs/how-to/getting-started).
-The management cluster should be configured in namespace mode so there is a different namespace for each GCP project
-under management. 
-
-If you already have a management cluster you can skip this step. Otherwise follow these instructions to setup the management cluster.
-
-
-1. Set the name for the management resources in the base kustomize package
-
-   ```
-   cd ${REPO}/manifests/gcp/v2/management/
-   
-   kpt cfg set . cluster-name $(MGMT_NAME)   
-   ```
-
-1. Set the same names in the kustomize package defining overlays
-
-   ```
-   cd ${REPO}/management
-   
-   kpt cfg set . cluster-name $(MGMT_NAME)   
-   kpt cfg set . gcloud.compute.zone $(MGMT_ZONE)
-   kpt cfg set . gcloud.core.project $(MGMT_PROJECT)   
-   ```
-
-   * This directory defines kustomize overlays applied to `manifests/gcp/v2/management`
-
-   * The names of the CNRM resources need to be set in both the base 
-     package and the overlays
-
-1. Hydrate and apply the manifests to create the cluster
-
-   ```
-   make apply
-   ```
-
-1. Create a kubeconfig context for the cluster
-
-   ```
-   gcloud --project=${PROJECT} container clusters get-credentials --region=${REGION} ${MGMT_ZONE}
-   ```
-
-1. Get the current context
-
-   ```
-   kubectl config current-context
-   ```
-
-1. Set MGMTCTXT in the Makefiles
-
-1. Install the CNRM system components
-
-   ```
-   make install-kcc
-   ```
-
-### Setup KCC Namespace For Each Project
-
-You will configure Config Connector in [Namespaced Mode](https://cloud.google.com/config-connector/docs/concepts/installation-types#namespaced_mode). This means
-
-* There will be a separate namespace for each GCP project under management
-* CNRM resources will be created in the namespace matching the GCP project
-  in which the resource lives.
-* There will be multiple instances of the CNRM controller each managing
-  resources in a different namespace
-* Each CNRM controller can use a different K8s account which can be bound
-  through workload identity to a different GCP Service Account with permissions to manage the project
-
-For each project you want to setup follow the instructions below.
-
-1. Create a copy of the per namespace/project resources
-
-   ```
-   cp -r ../manifests/gcp/v2/management/cnrm-install/install-per-namespace ./management/cnrm-install-${PROJECT}
-   ```
-1. Set the project to be mananged
-
-   ```
-   kpt cfg set cnrm-install-jlewi-dev managed_project ${MANAGED_PROJECT}
-   ```
-
-1. Set the host project where kcc is running
-
-   ```
-   kpt cfg set cnrm-install-jlewi-dev host_project ${HOST_PROJECT}
-   kpt cfg set cnrm-install-jlewi-dev host_id_pool ${HOST_PROJECT}.svc.id.goog
-   ```
-
-   * host_id_pool should be the workload identity pool used for the host project
-
-1. Apply this manifest to the mgmt cluster
-
-
-   ```
-   kubectl --context=$(MGMTCTXT) apply -f ./management/cnrm-install-${PROJECT}/per-namespace-components.yaml
-   ```
-
-1. Create the GSA and workload identity binding
-
-   ```
-   anthoscli apply --project=${MANAGED_PROJECt} -f service_account.yaml
-   ```
-
-1. anthoscli doesn't support IAMPolicyMember resources yet so we use this as a workaround
-   to make the newly created GSA an owner of the hosted project
-
-   ```
-   gcloud projects add-iam-policy-binding ${MANAGED_PROJECT} \
-    --member=serviceAccount:cnrm-system-${MANAGED_PROJECT}@${MANAGED_PROJECT}.iam.gserviceaccount.com  \
-    --role roles/owner
-   ```
-
-### Create a KUBECONFIG CNRM context for your managed project
-
-Follow these instructions to create a conveniently KUBECONFIG context in your CNRM host cluster
-to manage a specific project. This will be used in subsequent steps when deploying Kubeflow.
-
-1. Create a kubeconfig entry for your management cluster
-
-   ```
-   make create-cnrm-ctxt
-   ```
 
 ## Configure Kubeflow
 

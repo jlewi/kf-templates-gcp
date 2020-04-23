@@ -2,12 +2,12 @@
 apiVersion: iam.cnrm.cloud.google.com/v1beta1
 kind: IAMPolicyMember
 metadata:
-  name: kf-2020-0423-001-admin-wi # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-2020-0423-001"},{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
+  name: kf-2020-0423-002-admin-wi # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-2020-0423-002"},{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
 spec:
   resourceRef:
     apiVersion: iam.cnrm.cloud.google.com/v1beta1
     kind: IAMServiceAccount
-    name: kf-2020-0423-001-admin # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-2020-0423-001"},{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
+    name: kf-2020-0423-002-admin # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-2020-0423-002"},{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
   member: serviceAccount:jlewi-dev.svc.id.goog[kubeflow/kf-admin] # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
   role: roles/iam.workloadIdentityUser
 ---
@@ -15,11 +15,11 @@ spec:
 apiVersion: iam.cnrm.cloud.google.com/v1beta1
 kind: IAMPolicyMember
 metadata:
-  name: kf-2020-0423-001-admin-istio-wi # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-2020-0423-001"},{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
+  name: kf-2020-0423-002-admin-istio-wi # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-2020-0423-002"},{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
 spec:
   resourceRef:
     apiVersion: iam.cnrm.cloud.google.com/v1beta1
     kind: IAMServiceAccount
-    name: kf-2020-0423-001-admin # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-2020-0423-001"},{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
+    name: kf-2020-0423-002-admin # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"name","value":"kf-2020-0423-002"},{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
   member: serviceAccount:jlewi-dev.svc.id.goog[istio-system/kf-admin] # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
   role: roles/iam.workloadIdentityUser

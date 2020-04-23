@@ -14,8 +14,8 @@
 apiVersion: container.cnrm.cloud.google.com/v1beta1
 kind: ContainerNodePool
 metadata:
-  clusterName: "jlewi-dev/us-central1/kf-2020-0423-001" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"cluster-name","value":"kf-2020-0423-001"},{"name":"location","value":"us-central1"}]}}
-  name: kf-2020-0423-001-cpu-pool-v1 # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"cluster-name","value":"kf-2020-0423-001"}]}}
+  clusterName: "jlewi-dev/us-central1/kf-2020-0423-002" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"cluster-name","value":"kf-2020-0423-002"},{"name":"location","value":"us-central1"}]}}
+  name: kf-2020-0423-002-cpu-pool-v1 # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"cluster-name","value":"kf-2020-0423-002"}]}}
 spec:
   initialNodeCount: 2
   autoscaling:
@@ -29,4 +29,4 @@ spec:
     workloadMetadataConfig:
       nodeMetadata: GKE_METADATA_SERVER
   clusterRef:
-    name: kf-2020-0423-001 # {"type":"string","x-kustomize":{"setter":{"name":"cluster-name","value":"kf-2020-0423-001"}}}
+    name: kf-2020-0423-002 # {"type":"string","x-kustomize":{"setter":{"name":"cluster-name","value":"kf-2020-0423-002"}}}
