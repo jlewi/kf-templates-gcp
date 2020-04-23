@@ -189,15 +189,20 @@ For each project you want to setup follow the instructions below.
 1. Configure Kubeflow
 
    ```
-   kpt cfg set gcp_config gcloud.core.project ${MANAGED_PROJECT}
-   kpt cfg set gcp_config name ${KFNAME}
-   kpt cfg set gcp_config cluster-name ${KFNAME}
-   kpt cfg set gcp_config location ${LOCATION}
-   kpt cfg set gcp_config gcloud.compute.zone ${ZONE}
+   kpt cfg set manifests/gcp  cluster-name ${KFNAME}
+
+   kpt cfg set kubeflow name ${KFNAME}
+   kpt cfg set kubeflow cluster-name  ${KFNAME}
+   kpt cfg set kubeflow location ${LOCATION}
+   kpt cfg set kubeflow gcloud.compute.zone ${ZONE}
+   kpt cfg set kubeflow gcloud.core.project ${MANAGED_PROJECT}   
    ```
 
-   * TODO(jlewi): We can't seem to just set the values once in the root directory not sure why
+   * TODO(https://github.com/GoogleContainerTools/kpt/issues/541): If annotations are null kpt chokes. We have such files in manifests which is
+     why we have a separate set statement for manifests once we fix that we should be able to just call it once on root
+
    * TODO(jlewi): Should we standardize on name rather than cluster-name?
+   * TODO(jlewi): Need to figure out what to do about disk for metadata and pipelines when using regional clusters.
 
 ## Create the Kubeflow GCP resources
 

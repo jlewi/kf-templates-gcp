@@ -1,0 +1,35 @@
+# Copyright 2020 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# TODO(kunming): kustomize this config to include all the options we currently offer through DM
+
+# This is the base resource. Values set by kpt setters that are user specific should in general
+# go in the overlay that the user creates. The primary exception should be
+# the name since the name in the overlay needs to match the base package
+apiVersion: container.cnrm.cloud.google.com/v1beta1
+kind: ContainerCluster
+metadata:
+  name: kf-2020-0423-001 # {"type":"string","x-kustomize":{"setter":{"name":"cluster-name","value":"kf-2020-0423-001"}}}
+spec:
+  initialNodeCount: 2
+  loggingService: logging.googleapis.com/kubernetes
+  monitoringService: monitoring.googleapis.com/kubernetes
+  nodeConfig:
+    machineType: n1-standard-8
+    metadata:
+      disable-legacy-endpoints: "true"
+    workloadMetadataConfig:
+      nodeMetadata: GKE_METADATA_SERVER
+  releaseChannel:
+    channel: STABLE

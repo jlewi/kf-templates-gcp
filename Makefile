@@ -19,11 +19,14 @@ get-pkg:
 	# to a specific version
 	# TODO(jlewi): We should think about how we layout packages in kubeflow/manifests so
 	# users don't end up pulling tests or other things they don't need.
-	kpt pkg get https://github.com/jlewi/manifests.git@blueprints manifests
-	rm -rf manifests/tests
+	kpt pkg get https://github.com/jlewi/manifests.git@blueprints ./kubeflow
+	rm -rf ./manifests/tests
 	# TODO(jlewi): Package appears to cause problems for kpt. We should delete in the upstream
 	# since its not needed anymore.
-	rm -rf common/ambassador
+	# https://github.com/GoogleContainerTools/kpt/issues/539
+	rm -rf ./manifests/common/ambassador
+	# TODO(https://github.com/GoogleContainerTools/kpt/issues/541)
+	rm -rf ./manifests/istio
 
 .PHONY: hydrate
 apply-gcp: hydrate
