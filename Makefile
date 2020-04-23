@@ -21,6 +21,9 @@ get-pkg:
 	# users don't end up pulling tests or other things they don't need.
 	kpt pkg get https://github.com/jlewi/manifests.git@blueprints manifests
 	rm -rf manifests/tests
+	# TODO(jlewi): Package appears to cause problems for kpt. We should delete in the upstream
+	# since its not needed anymore.
+	rm -rf common/ambassador
 
 .PHONY: hydrate
 apply-gcp: hydrate

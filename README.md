@@ -50,14 +50,6 @@ make pkg-get
   * This generates an error per [GoogleContainerTools/kpt#539](https://github.com/GoogleContainerTools/kpt/issues/539) but it looks like
     this can be ignored.
 
-
-1. Initialize the submodules
-
-   ```
-   git submodule init
-   git submodule update
-   ```
-
 ## Setting up the management cluster
 
 The management cluster is a GKE cluster running [Config Connector](https://cloud.google.com/config-connector/docs/how-to/getting-started).
@@ -171,7 +163,7 @@ For each project you want to setup follow the instructions below.
     --member=serviceAccount:cnrm-system-${MANAGED_PROJECT}@${MANAGED_PROJECT}.iam.gserviceaccount.com  \
     --role roles/owner
    ```
-## Create the Kubeflow GCP resources
+## Configure Kubeflow
 
 1. Pick a name for the Kubeflow deployment
 
@@ -194,14 +186,8 @@ For each project you want to setup follow the instructions below.
    * TODO(jlewi): Metadata and Pipelines are still using zonal disks what do we have to do make that work with regional clusters? For metadata
      we could use CloudSQL.
 
-1. Set the name of all CNRM resources in the base kustomize package
+1. Configure Kubeflow
 
-   ```      
-   kpt cfg set manifests/gcp/v2/cnrm cluster-name ${KFNAME}
-   ```
-
-1. Configure CNRM patches
-   
    ```
    kpt cfg set gcp_config gcloud.core.project ${MANAGED_PROJECT}
    kpt cfg set gcp_config name ${KFNAME}
@@ -210,8 +196,19 @@ For each project you want to setup follow the instructions below.
    kpt cfg set gcp_config gcloud.compute.zone ${ZONE}
    ```
 
+   * TODO(jlewi): We can't seem to just set the values once in the root directory not sure why
    * TODO(jlewi): Should we standardize on name rather than cluster-name?
 
+## Create the Kubeflow GCP resources
+
+1. Set the name of all CNRM resources in the base kustomize package
+
+   ```      
+   kpt cfg set manifests/gcp/v2/cnrm cluster-name ${KFNAME}
+   ```
+
+1. Configure CNRM patches
+   
 1. Edit `Makefile` change the values of `MGMTCTXT` to the context for the managmenet cluster
 
 
