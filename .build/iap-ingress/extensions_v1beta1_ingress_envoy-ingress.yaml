@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   annotations:
     ingress.kubernetes.io/ssl-redirect: "true"
-    kubernetes.io/ingress.global-static-ip-name: kf-bp-0420-002-ip
+    kubernetes.io/ingress.global-static-ip-name: kf-2020-0423-001-ip
     networking.gke.io/managed-certificates: gke-certificate
   labels:
     kustomize.component: iap-ingress
@@ -11,7 +11,7 @@ metadata:
   namespace: istio-system
 spec:
   rules:
-  - host: kf-bp-0420-002.endpoints.jlewi-dev.cloud.goog
+  - host: kf-2020-0423-001.endpoints.jlewi-dev.cloud.goog
     http:
       paths:
       - backend:

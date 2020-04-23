@@ -1,0 +1,6 @@
+# Name of kubeconfig contexts for various 
+# TODO(jlewi): Add kpt setters?
+mgmt-ctxt: jlewi-mgmt-0420-jlewi-dev # {"type":"string","x-kustomize":{"partialSetters":[{"name":"mgmt-ctxt","value":"jlewi-mgmt-0420-jlewi-dev"}]}}
+kf-ctxt: gke_jlewi-dev_us-central1_kf-bp-0420-002 # {"type":"string","x-kustomize":{"partialSetters":[{"name":"kf-ctxt","value":"jlewi-dev"}]}}
+project: jlewi-dev # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
+location: us-central1 # {"type":"string","x-kustomize":{"partialSetters":[{"name":"location","value":"us-central1"}]}}

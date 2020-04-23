@@ -168,7 +168,27 @@ For each project you want to setup follow the instructions below.
     --member=serviceAccount:cnrm-system-${MANAGED_PROJECT}@${MANAGED_PROJECT}.iam.gserviceaccount.com  \
     --role roles/owner
    ```
+
+### Create a KUBECONFIG CNRM context for your managed project
+
+Follow these instructions to create a conveniently KUBECONFIG context in your CNRM host cluster
+to manage a specific project. This will be used in subsequent steps when deploying Kubeflow.
+
+1. Create a kubeconfig entry for your management cluster
+
+   ```
+   make create-cnrm-ctxt
+   ```
+
 ## Configure Kubeflow
+
+1. Set the name of the KUBECONFIG context pointing at your management cluster
+
+   ```
+   kpt cfg set ./kubeflow mgmt-ctxt ${MGMT_CTXT}
+   ```
+
+   * Follow the instructions in the previous section to create a kubecontext for your managment context
 
 1. Pick a name for the Kubeflow deployment
 
@@ -191,15 +211,15 @@ For each project you want to setup follow the instructions below.
    * TODO(jlewi): Metadata and Pipelines are still using zonal disks what do we have to do make that work with regional clusters? For metadata
      we could use CloudSQL.
 
-1. Configure Kubeflow
+1. Set the values for the kubeflow deployment.
 
    ```
    kpt cfg set manifests/gcp  cluster-name ${KFNAME}
+   kpt cfg set manifests/gcp  gcloud.compute.zone ${ZONE}
 
    kpt cfg set kubeflow name ${KFNAME}
    kpt cfg set kubeflow cluster-name  ${KFNAME}
    kpt cfg set kubeflow location ${LOCATION}
-   kpt cfg set kubeflow gcloud.compute.zone ${ZONE}
    kpt cfg set kubeflow gcloud.core.project ${MANAGED_PROJECT}   
    ```
 
@@ -207,7 +227,8 @@ For each project you want to setup follow the instructions below.
      why we have a separate set statement for manifests once we fix that we should be able to just call it once on root
 
    * TODO(jlewi): Should we standardize on name rather than cluster-name?
-   * TODO(jlewi): Need to figure out what to do about disk for metadata and pipelines when using regional clusters.
+   * TODO(jlewi): Need to figure out what to do about disk for metadata and pipelines when using regional clusters?. Maybe just 
+     use Cloud SQL?
 
 ## Create the Kubeflow GCP resources
 
