@@ -29,24 +29,20 @@ get-pkg:
 	rm -rf ./manifests/istio
 
 .PHONY: hydrate
-apply-gcp: hydrate
+apply-gcp: hydrate-gcp
 	# Apply management resources
 	kubectl --context=$(MGMTCTXT) apply -f ./.build/gcp_config
 
-apply-asm:
+.PHONY: apply-asm
+apply-asm: hydrate-asm
+	kubectl --context=${KFCTXT} apply -f ./.build/istio/Base
 	# TODO(jlewi): Should we use the newer version in asm/asm
-	#istioctl manifest --context=${KFCTXT} apply -f ./manifests/gcp/v2/asm/istio-operator.yaml 
-	# TODO(jlewi): Switch to anthoscli once its working
-	anthoscli apply -f ./manifests/gcp/v2/asm/istio-operator.yaml 
+	# istioctl manifest --context=${KFCTXT} apply -f ./manifests/gcp/v2/asm/istio-operator.yaml 
+	# TODO(jlewi): Switch to anthoscli once it supports generating manifests 
+	# anthoscli apply -f ./manifests/gcp/v2/asm/istio-operator.yaml 
 
-# TODO(jlewi): If we use prune does that give us a complete upgrade solution?
-# TODO(jlewi): Should we insert appropriate wait statements to wait for various services to
-# be available before continuing?
-.PHONY: apply
-apply: hydrate
-	# Apply management resources
-	kubectl --context=$(MGMTCTXT) apply -f ./.build/gcp_config
-
+.PHONY: apply-kubeflow
+apply-kubeflow: hydrate-kubeflow
 	# Apply kubeflow apps
 	kubectl --context=$(KFCTXT) apply -f ./.build/namespaces.yaml
 	kubectl --context=$(KFCTXT) apply -f ./.build/kubeflow-istio
@@ -61,21 +57,28 @@ apply: hydrate
 	kubectl --context=$(KFCTXT) apply -f ./.build/cert-manager
 	kubectl --context=$(KFCTXT) apply -f ./.build/kubeflow-apps
 
-# Hydrate all the application directories directories
-# TODO(jlewi): We can't use a kustomization file to combine the top level packages
-# because they might get vars conflicts. Also order is important when applying them.
-.PHONY: hydrate
-hydrate:
-	# Delete build because we want to prune any resources which are no longer defined in the manifests
-	rm -rf .build
-	mkdir -p .build/
+# TODO(jlewi): If we use prune does that give us a complete upgrade solution?
+# TODO(jlewi): Should we insert appropriate wait statements to wait for various services to
+# be available before continuing?
+.PHONY: apply
+apply: clean-build apply-gcp apply-asm apply-kubeflow iap-secret
 
+.PHONY: hydrate-gcp
+hydrate-gcp:
 	# ***********************************************************************************
 	# Hydrate cnrm
 	mkdir -p .build/gcp_config 
 	kustomize build -o .build/gcp_config gcp_config
 
-	#***********************************************************************************
+.PHONY: hydrate-asm
+hydrate-asm:	
+	#************************************************************************************
+	# hydrate asm
+	istioctl manifest generate -f ./manifests/gcp/v2/asm/istio-operator.yaml -o .build/istio
+
+.PHONY: hydrate-kubeflow
+hydrate-kubeflow:	
+	#************************************************************************************
 	# Hydrate kubeflow applications
 	cp -f ./kustomize/namespaces.yaml ./.build/
 	mkdir -p .build/application
@@ -96,7 +99,19 @@ hydrate:
 	kustomize build --load_restrictor none -o .build/kubeflow-istio kustomize/kubeflow-istio
 	mkdir -p .build/metacontroller
 	kustomize build --load_restrictor none -o .build/metacontroller kustomize/metacontroller
-	
+
+.PHONEY: clean-build
+clean-build:
+	# Delete build because we want to prune any resources which are no longer defined in the manifests
+	rm -rf .build
+	mkdir -p .build/
+
+# Hydrate all the application directories directories
+# TODO(jlewi): We can't use a kustomization file to combine the top level packages
+# because they might get vars conflicts. Also order is important when applying them.
+.PHONY: hydrate
+hydrate: clean-build hydrate-gcp hydrate-asm hydrate-kubeflow
+			
 # Create the iap secret from environment variables
 .PHONY: iap-secret
 iap-secret:

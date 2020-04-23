@@ -27,10 +27,15 @@ TODO:
 
 ## Install the required tools
 
-```
-gcloud components install kpt anthoscli beta
-gcloud components update
-```
+1. Install gcloud components
+
+   ```
+   gcloud components install kpt anthoscli beta
+   gcloud components update
+   ```
+
+1. Follow these [instructions](https://cloud.google.com/service-mesh/docs/gke-install-new-cluster#download_the_installation_file) to
+   install istioctl
 
 ## Clone the Blueprint
 
