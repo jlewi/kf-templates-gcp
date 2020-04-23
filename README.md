@@ -21,6 +21,7 @@ Kubeflow is deployed as follows
 
 TODO:
 
+ * Use kpt packages to pull in upstream packages rather than git submodules?
  * I think when we create the cluster we need to set the [ASM mesh labels](https://cloud.google.com/service-mesh/docs/gke-install-new-cluster)
  * I think we need our GKE clusters to be in a release channel rather than pinning to a specific GKE version.
 
@@ -38,6 +39,17 @@ gcloud components update
    ```
    git clone https://github.com/jlewi/kf-templates-gcp.git ${REPO}
    ```
+
+## Fetch packages using kpt
+
+```
+
+make pkg-get
+```
+
+  * This generates an error per [GoogleContainerTools/kpt#539](https://github.com/GoogleContainerTools/kpt/issues/539) but it looks like
+    this can be ignored.
+
 
 1. Initialize the submodules
 

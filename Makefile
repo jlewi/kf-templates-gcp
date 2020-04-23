@@ -12,6 +12,16 @@ echo-ctxt:
 	@echo MGMTCTXT=$(MGMTCTXT)
 	@echo KFCTXT=$(KFCTXT)
 
+# Get packages
+.PHONY: hydrate
+get-pkg:
+	# TODO(jlewi): We should switch to using upstream kubeflow/manifests and pin
+	# to a specific version
+	# TODO(jlewi): We should think about how we layout packages in kubeflow/manifests so
+	# users don't end up pulling tests or other things they don't need.
+	kpt pkg get https://github.com/jlewi/manifests.git@blueprints manifests
+	rm -rf manifests/tests
+
 .PHONY: hydrate
 apply-gcp: hydrate
 	# Apply management resources
@@ -19,9 +29,9 @@ apply-gcp: hydrate
 
 apply-asm:
 	# TODO(jlewi): Should we use the newer version in asm/asm
-	istioctl manifest --context=${KFCTXT} apply -f ./manifests/gcp/v2/asm/istio-operator.yaml 
+	#istioctl manifest --context=${KFCTXT} apply -f ./manifests/gcp/v2/asm/istio-operator.yaml 
 	# TODO(jlewi): Switch to anthoscli once its working
-	#anthoscli apply -f ./manifests/gcp/v2/asm/istio-operator.yaml 
+	anthoscli apply -f ./manifests/gcp/v2/asm/istio-operator.yaml 
 
 # TODO(jlewi): If we use prune does that give us a complete upgrade solution?
 # TODO(jlewi): Should we insert appropriate wait statements to wait for various services to
