@@ -1,6 +1,0 @@
-[submodule "manifests"]
-	path = manifests
-	url = git@github.com:jlewi/manifests.git
-[submodule "asm"]
-	path = asm
-	url = git@github.com:GoogleCloudPlatform/anthos-service-mesh-packages.git
