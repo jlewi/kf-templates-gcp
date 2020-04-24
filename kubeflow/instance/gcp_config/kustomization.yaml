@@ -8,7 +8,7 @@ namespace: jlewi-dev # {"type":"string","x-kustomize":{"setBy":"kpt","partialSet
 commonLabels:
   kf-name: jlewi-dev
 resources:
-- ../../vendor/manifests/gcp/v2/cnrm # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcp_manifests_path","value":"../../vendor/manifests"}]}}
+- ../../upstream/manifests/gcp/v2/cnrm # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcp_manifests_path","value":"../../upstream/manifests"}]}}
 - iam_policy.yaml
 patchesStrategicMerge:
 - cluster_patch.yaml

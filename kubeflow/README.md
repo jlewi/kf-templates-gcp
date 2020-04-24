@@ -54,8 +54,8 @@ one if you haven't already.
   * TODO(jlewi): This is giving an error like the one below but this can be ignored
 
     ```
-    kpt pkg get https://github.com/jlewi/manifests.git@blueprints ./vendor
-    fetching package / from https://github.com/jlewi/manifests to vendor/manifests
+    kpt pkg get https://github.com/jlewi/manifests.git@blueprints ./upstream
+    fetching package / from https://github.com/jlewi/manifests to upstream/manifests
     Error: resources must be annotated with config.kubernetes.io/index to be written to files
     ```
 
@@ -94,13 +94,13 @@ one if you haven't already.
 1. Set the values for the kubeflow deployment.
 
    ```
-   kpt cfg set ./vendor/manifests/gcp  name ${KFNAME}
-   kpt cfg set ./vendor/manifests/gcp gcloud.core.project ${MANAGED_PROJECT}   
-   kpt cfg set ./vendor/manifests/gcp  gcloud.compute.zone ${ZONE}
+   kpt cfg set ./upstream/manifests/gcp  name ${KFNAME}
+   kpt cfg set ./upstream/manifests/gcp gcloud.core.project ${MANAGED_PROJECT}   
+   kpt cfg set ./upstream/manifests/gcp  gcloud.compute.zone ${ZONE}
 
-   kpt cfg set ./overlays name ${KFNAME}   
-   kpt cfg set ./overlays location ${LOCATION}
-   kpt cfg set ./overlays gcloud.core.project ${MANAGED_PROJECT}   
+   kpt cfg set ./instance name ${KFNAME}   
+   kpt cfg set ./instance location ${LOCATION}
+   kpt cfg set ./instance gcloud.core.project ${MANAGED_PROJECT}   
    ```
 
    * TODO(https://github.com/GoogleContainerTools/kpt/issues/541): If annotations are null kpt chokes. We have such files in manifests which is
@@ -123,3 +123,13 @@ one if you haven't already.
    ```
    make apply
    ```
+
+## Common Problems
+
+1. 502s and backend unhealthy
+
+   * This is often the result of cont configuring ASM correctly (i.e. not specifying the correct
+     ServiceMessh or cluster name)   
+
+  * This usually manifests as the istio proxy in the istio ingressgateway from not being able to start
+    causing the health check failure. 
