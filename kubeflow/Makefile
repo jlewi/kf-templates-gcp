@@ -51,7 +51,7 @@ apply-gcp: hydrate-gcp
 
 .PHONY: apply-asm
 apply-asm: hydrate-asm
-	kubectl --context=${KFCTXT} apply -f ./$(BUILD_DIR)/istio/Base
+	kubectl --context=${KFCTXT} apply --recursive=true -f ./$(BUILD_DIR)/istio/Base
 	# TODO(jlewi): Should we use the newer version in asm/asm
 	# istioctl manifest --context=${KFCTXT} apply -f ./manifests/gcp/v2/asm/istio-operator.yaml 
 	# TODO(jlewi): Switch to anthoscli once it supports generating manifests 
@@ -131,6 +131,7 @@ clean-build:
 hydrate: clean-build hydrate-gcp hydrate-asm hydrate-kubeflow
 			
 # Create the iap secret from environment variables
+# TODO(jlewi): How can we test to make sure CLIENT_ID is set so we don't create an empty secret.
 .PHONY: iap-secret
 iap-secret:
 	kubectl --context=$(KFCTXT) -n istio-system create secret generic kubeflow-oauth --from-literal=client_id=${CLIENT_ID} --from-literal=client_secret=${CLIENT_SECRET}
