@@ -1,0 +1,11 @@
+apiVersion: kpt.dev/v1alpha1
+kind: Kptfile
+metadata:
+    name: manifests
+upstream:
+    type: git
+    git:
+        commit: f57aa2869229a8fb85f3055b8016c49c5a71171a
+        repo: https://github.com/jlewi/manifests
+        directory: /
+        ref: blueprints
