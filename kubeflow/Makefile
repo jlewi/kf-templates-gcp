@@ -134,11 +134,16 @@ clean-build:
 # because they might get vars conflicts. Also order is important when applying them.
 .PHONY: hydrate
 hydrate: clean-build hydrate-gcp hydrate-asm hydrate-kubeflow
-			
+	
+
+.PHONY: check-iap 
+check-iap:
+	./hack/check_oauth_secret.sh
+
 # Create the iap secret from environment variables
 # TODO(jlewi): How can we test to make sure CLIENT_ID is set so we don't create an empty secret.
 .PHONY: iap-secret
-iap-secret:
+iap-secret: check-iap
 	kubectl --context=$(KFCTXT) -n istio-system create secret generic kubeflow-oauth --from-literal=client_id=${CLIENT_ID} --from-literal=client_secret=${CLIENT_SECRET}
 
 .PHONE: wait-gcp	
@@ -151,3 +156,7 @@ create-ctxt:
 	PROJECT=$(shell yq r ./settings.yaml project) \
 	   REGION=$(shell yq r ./settings.yaml location) \
 	   NAME=$(NAME) ./hack/create_context.sh
+
+# Delete gcp resources
+delete-gcp:
+	kubectl	--context=$(MGMTCTXT) delete -f $(BUILD_DIR)/gcp_config
