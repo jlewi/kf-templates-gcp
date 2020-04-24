@@ -81,7 +81,7 @@ apply-kubeflow: hydrate-kubeflow
 # TODO(jlewi): Should we insert appropriate wait statements to wait for various services to
 # be available before continuing?
 .PHONY: apply
-apply: clean-build apply-gcp wait-gcp create-ctxt apply-asm apply-kubeflow iap-secret
+apply: clean-build check-iap apply-gcp wait-gcp create-ctxt apply-asm apply-kubeflow iap-secret
 
 .PHONY: hydrate-gcp
 hydrate-gcp:
