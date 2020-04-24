@@ -12,31 +12,31 @@ metadata:
     ksonnet.io/component: prometheus
   name: prometheus
 rules:
-  - apiGroups:
-      - ""
-    resources:
-      - nodes
-      - nodes/proxy
-      - services
-      - endpoints
-      - pods
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - extensions
-      - networking.k8s.io
-    resources:
-      - ingresses
-    verbs:
-      - get
-      - list
-      - watch
-  - nonResourceURLs:
-      - /metrics
-    verbs:
-      - get
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  - nodes/proxy
+  - services
+  - endpoints
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - extensions
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - watch
+- nonResourceURLs:
+  - /metrics
+  verbs:
+  - get
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
@@ -49,9 +49,9 @@ roleRef:
   kind: ClusterRole
   name: prometheus
 subjects:
-  - kind: ServiceAccount
-    name: prometheus
-    namespace: stackdriver
+- kind: ServiceAccount
+  name: prometheus
+  namespace: stackdriver
 ---
 apiVersion: v1
 data:
@@ -221,9 +221,9 @@ metadata:
   namespace: stackdriver
 spec:
   ports:
-    - name: prometheus
-      port: 9090
-      protocol: TCP
+  - name: prometheus
+    port: 9090
+    protocol: TCP
   selector:
     app: prometheus
   type: ClusterIP
@@ -250,24 +250,24 @@ spec:
       namespace: stackdriver
     spec:
       containers:
-        - image: gcr.io/stackdriver-prometheus/stackdriver-prometheus:release-0.4.2
-          imagePullPolicy: Always
-          name: prometheus
-          ports:
-            - containerPort: 9090
-              name: web
-          resources:
-            limits:
-              cpu: 400m
-              memory: 1000Mi
-            requests:
-              cpu: 20m
-              memory: 50Mi
-          volumeMounts:
-            - mountPath: /etc/prometheus
-              name: config-volume
+      - image: gcr.io/stackdriver-prometheus/stackdriver-prometheus:release-0.4.2
+        imagePullPolicy: Always
+        name: prometheus
+        ports:
+        - containerPort: 9090
+          name: web
+        resources:
+          limits:
+            cpu: 400m
+            memory: 1000Mi
+          requests:
+            cpu: 20m
+            memory: 50Mi
+        volumeMounts:
+        - mountPath: /etc/prometheus
+          name: config-volume
       serviceAccountName: prometheus
       volumes:
-        - configMap:
-            name: prometheus
-          name: config-volume
+      - configMap:
+          name: prometheus
+        name: config-volume

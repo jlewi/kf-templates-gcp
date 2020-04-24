@@ -23,8 +23,8 @@ spec:
     maintainers: []
     owners: []
     keywords:
-     - iap-ingress
-     - kubeflow
+    - iap-ingress
+    - kubeflow
     links:
     - description: About
       url: ""

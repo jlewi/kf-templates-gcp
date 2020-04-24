@@ -35,11 +35,6 @@ get-pkg:
 	# to a specific version
 	# TODO(jlewi): We should think about how we layout packages in kubeflow/manifests so
 	# users don't end up pulling tests or other things they don't need.
-	# The reason we  put this in a parent directory is as a workaround for https://github.com/GoogleContainerTools/kpt/issues/539
-	# kpt will choke on some of our manifests because annotations is null. 
-	# So if we check it out as a subdirectory of ${CWD} then 
-	# ktp cfg {CWD} set ....
-	# won't work. Hopefully this can be fixed in the future.
 	kpt pkg get $(MANIFESTS_URL) ./vendor
 	rm -rf $(MANIFESTS_DIR)/tests
 	# TODO(jlewi): Package appears to cause problems for kpt. We should delete in the upstream
@@ -156,8 +151,8 @@ wait-gcp:
 # Create a kubeconfig context for the kubeflow cluster
 .PHONE: create-cnrm-ctxt
 create-ctxt:
-	PROJECT=$(shell yq r ./settings.yaml project) \
-	   REGION=$(shell yq r ./settings.yaml location) \
+	PROJECT=$(shell yq r ./overlays/settings.yaml project) \
+	   REGION=$(shell yq r ./overlays/settings.yaml location) \
 	   NAME=$(NAME) ./hack/create_context.sh
 
 # Delete gcp resources

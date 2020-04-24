@@ -17,16 +17,16 @@
 apiVersion: container.cnrm.cloud.google.com/v1beta1
 kind: ContainerCluster
 metadata:
-  clusterName: "project-id/us-east1-d/kf-name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"name","value":"kf-name"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
+  clusterName: "jlewi-dev/us-central1-f/kf-2020-0424-001" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"name","value":"kf-2020-0424-001"},{"name":"gcloud.compute.zone","value":"us-central1-f"}]}}
   labels:
-    mesh_id: "project-id_us-east1-d_kf-name" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"project-id"},{"name":"name","value":"kf-name"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
-  name: kf-name # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kf-name"}}}
+    mesh_id: "jlewi-dev_us-central1-f_kf-2020-0424-001" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"name","value":"kf-2020-0424-001"},{"name":"gcloud.compute.zone","value":"us-central1-f"}]}}
+  name: kf-2020-0424-001 # {"type":"string","x-kustomize":{"setter":{"name":"name","value":"kf-2020-0424-001"}}}
 spec:
   initialNodeCount: 2
   minMasterVersion: "1.14.10-gke.36"
-  location: us-east1-d # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.compute.zone","value":"us-east1-d"}}}
+  location: us-central1-f # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.compute.zone","value":"us-central1-f"}}}
   workloadIdentityConfig:
-    identityNamespace: project-id.svc.id.goog # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"project-id"}]}}
+    identityNamespace: jlewi-dev.svc.id.goog # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
   loggingService: logging.googleapis.com/kubernetes
   monitoringService: monitoring.googleapis.com/kubernetes
   nodeConfig:
@@ -34,6 +34,6 @@ spec:
     metadata:
       disable-legacy-endpoints: "true"
     serviceAccountRef:
-      name: kf-name-vm # {"type":"string","x-kustomize":{"partialSetters":[{"name":"name","value":"kf-name"}]}}
+      name: kf-2020-0424-001-vm # {"type":"string","x-kustomize":{"partialSetters":[{"name":"name","value":"kf-2020-0424-001"}]}}
     workloadMetadataConfig:
       nodeMetadata: GKE_METADATA_SERVER

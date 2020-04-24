@@ -23,8 +23,8 @@ spec:
     maintainers: []
     owners: []
     keywords:
-     - gpu-driver
-     - kubeflow
+    - gpu-driver
+    - kubeflow
     links:
     - description: About
       url: ""

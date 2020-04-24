@@ -4,4 +4,4 @@ patchesStrategicMerge:
 - profiles-config.yaml
 - default-install-config.yaml
 resources:
-- ../../../manifests/stacks/gcp # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"kustomize_manifests_path","value":"../../../manifests"}]}}
+- ../../../vendor/manifests/stacks/gcp # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"kustomize_manifests_path","value":"../../../vendor/manifests"}]}}

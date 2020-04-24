@@ -5,7 +5,7 @@ metadata:
 upstream:
     type: git
     git:
-        commit: f57aa2869229a8fb85f3055b8016c49c5a71171a
+        commit: 32ac506e059508dae441c3e5f713da07f04a4403
         repo: https://github.com/jlewi/manifests
         directory: /
         ref: blueprints

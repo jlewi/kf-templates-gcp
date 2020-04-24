@@ -51,6 +51,14 @@ one if you haven't already.
   * This generates an error per [GoogleContainerTools/kpt#539](https://github.com/GoogleContainerTools/kpt/issues/539) but it looks like
     this can be ignored.
 
+  * TODO(jlewi): This is giving an error like the one below but this can be ignored
+
+    ```
+    kpt pkg get https://github.com/jlewi/manifests.git@blueprints ./vendor
+    fetching package / from https://github.com/jlewi/manifests to vendor/manifests
+    Error: resources must be annotated with config.kubernetes.io/index to be written to files
+    ```
+
 ## Deploy Kubeflow
 
 1. Set the name of the KUBECONFIG context for the management cluster; this kubecontext will
@@ -86,19 +94,18 @@ one if you haven't already.
 1. Set the values for the kubeflow deployment.
 
    ```
-   kpt cfg set ../manifests/gcp  cluster-name ${KFNAME}
-   kpt cfg set ../manifests/gcp  gcloud.compute.zone ${ZONE}
+   kpt cfg set ./vendor/manifests/gcp  name ${KFNAME}
+   kpt cfg set ./vendor/manifests/gcp gcloud.core.project ${MANAGED_PROJECT}   
+   kpt cfg set ./vendor/manifests/gcp  gcloud.compute.zone ${ZONE}
 
-   kpt cfg set . name ${KFNAME}
-   kpt cfg set . cluster-name  ${KFNAME}
-   kpt cfg set . location ${LOCATION}
-   kpt cfg set . gcloud.core.project ${MANAGED_PROJECT}   
+   kpt cfg set ./overlays name ${KFNAME}   
+   kpt cfg set ./overlays location ${LOCATION}
+   kpt cfg set ./overlays gcloud.core.project ${MANAGED_PROJECT}   
    ```
 
    * TODO(https://github.com/GoogleContainerTools/kpt/issues/541): If annotations are null kpt chokes. We have such files in manifests which is
      why we have a separate set statement for manifests once we fix that we should be able to just call it once on root
 
-   * TODO(jlewi): Should we standardize on name rather than cluster-name?
    * TODO(jlewi): Need to figure out what to do about disk for metadata and pipelines when using regional clusters?. Maybe just 
      use Cloud SQL?
 

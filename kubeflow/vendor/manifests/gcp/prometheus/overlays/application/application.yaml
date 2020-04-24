@@ -23,8 +23,8 @@ spec:
     maintainers: []
     owners: []
     keywords:
-     - prometheus
-     - kubeflow
+    - prometheus
+    - kubeflow
     links:
     - description: About
       url: ""

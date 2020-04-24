@@ -14,7 +14,6 @@
 
 imports:
 - path: storage.jinja
-
 resources:
 - name: kubeflow
   type: storage.jinja
@@ -22,12 +21,12 @@ resources:
     zone: SET_THE_ZONE
     createPipelinePersistentStorage: SET_CREATE_PIPELINE_PERSISTENT_STORAGE
     disks:
-     - sizeGb: 20
-       diskType: pd-standard
-       usage: metadata-store
-     - sizeGb: 200
-       diskType: pd-standard
-       usage: artifact-store
+    - sizeGb: 20
+      diskType: pd-standard
+      usage: metadata-store
+    - sizeGb: 200
+      diskType: pd-standard
+      usage: artifact-store
     enable_cloudsql: false
     database:
       name: mlpipeline

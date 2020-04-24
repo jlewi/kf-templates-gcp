@@ -1,7 +1,7 @@
 apiVersion: container.cnrm.cloud.google.com/v1alpha2
 kind: ContainerNodePool
 metadata:
-  clusterName: "jlewi-dev/us-central1-f/jlewi-mgmt-0420" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"cluster-name","value":"jlewi-mgmt-0420"},{"name":"gcloud.compute.zone","value":"us-central1-f"}]}}
+  clusterName: "jlewi-dev/us-central1-f/cluster-name" # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"cluster-name","value":"cluster-name"},{"name":"gcloud.compute.zone","value":"us-central1-f"}]}}
   name: default-pool
   namespace: "jlewi-dev" # {"type":"string","x-kustomize":{"setter":{"name":"gcloud.core.project","value":"jlewi-dev"}}}
 spec:
@@ -26,4 +26,4 @@ spec:
     autoRepair: true
     autoUpgrade: true
   clusterRef:
-    name: jlewi-mgmt-0420 # {"type":"string","x-kustomize":{"setter":{"name":"cluster-name","value":"jlewi-mgmt-0420"}}}
+    name: cluster-name # {"type":"string","x-kustomize":{"setter":{"name":"cluster-name","value":"cluster-name"}}}

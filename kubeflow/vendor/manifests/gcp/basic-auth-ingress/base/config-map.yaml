@@ -1,81 +1,44 @@
 apiVersion: v1
 data:
-  update_backend.sh: |
-    #!/bin/bash
-    #
-    # A simple shell script to configure the health checks by using gcloud.
-    set -x 
-    [ -z ${NAMESPACE} ] && echo Error NAMESPACE must be set && exit 1
-    [ -z ${SERVICE} ] && echo Error SERVICE must be set && exit 1
-    [ -z ${INGRESS_NAME} ] && echo Error INGRESS_NAME must be set && exit 1
-
-    PROJECT=$(curl -s -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/project/project-id)
-    if [ -z ${PROJECT} ]; then
-      echo Error unable to fetch PROJECT from compute metadata
-      exit 1
-    fi
-
-    set_health_check() {
-      # Activate the service account, allow 5 retries
-      if [[ ! -z "${GOOGLE_APPLICATION_CREDENTIALS}" ]]; then
-        # TODO(jlewi): As of 0.7 we should always be using workload identity. We can remove it post 0.7.0 once we have workload identity
-        # fully working
-        # Activate the service account, allow 5 retries
-        for i in {1..5}; do gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS} && break || sleep 10; done
-      fi      
-
-      # For debugging print out what account we are using
-      gcloud auth list
-
-      NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[0].nodePort}')
-      echo node port is ${NODE_PORT}
-
-      while [[ -z ${BACKEND_NAME} ]]; do
-        BACKENDS=$(kubectl --namespace=${NAMESPACE} get ingress ${INGRESS_NAME} -o jsonpath='{.metadata.annotations.ingress\.kubernetes\.io/backends}')
-        echo "fetching backends info with ${INGRESS_NAME}: ${BACKENDS}"
-        BACKEND_NAME=$(echo $BACKENDS | grep -o "k8s-be-${NODE_PORT}--[0-9a-z]\+")
-        echo "backend name is ${BACKEND_NAME}"
-        sleep 2
-      done
-
-      while [[ -z ${BACKEND_SERVICE} ]];
-      do BACKEND_SERVICE=$(gcloud --project=${PROJECT} compute backend-services list --filter=name~k8s-be-${NODE_PORT}- --uri);
-      echo "Waiting for the backend-services resource PROJECT=${PROJECT} NODEPORT=${NODE_PORT} SERVICE=${SERVICE}...";
-      sleep 2;
-      done
-
-      while [[ -z ${HEALTH_CHECK_URI} ]];
-      do HEALTH_CHECK_URI=$(gcloud compute --project=${PROJECT} health-checks list --filter=name~${BACKEND_NAME} --uri);
-      echo "Waiting for the healthcheck resource PROJECT=${PROJECT} NODEPORT=${NODE_PORT} SERVICE=${SERVICE}...";
-      sleep 2;
-      done
-
-      echo health check URI is ${HEALTH_CHECK_URI}
-
-      # Since we create the envoy-ingress ingress object before creating the envoy
-      # deployment object, healthcheck will not be configured correctly in the GCP
-      # load balancer. It will default the healthcheck request path to a value of
-      # / instead of the intended /healthz.
-      # Manually update the healthcheck request path to /healthz
-      if [[ ${HEALTHCHECK_PATH} ]]; then
-        echo Running health checks update ${HEALTH_CHECK_URI} with ${HEALTHCHECK_PATH}
-        gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=${HEALTHCHECK_PATH}
-      else
-        echo Running health checks update ${HEALTH_CHECK_URI} with /healthz
-        gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI} --request-path=/healthz
-      fi
-
-      if [[ ${USE_ISTIO} ]]; then
-        # Create the route so healthcheck can pass
-        kubectl apply -f /var/envoy-config/healthcheck_route.yaml
-      fi
-    }
-
-    while true; do
-      set_health_check
-      echo "Backend updated successfully. Waiting 1 hour before updating again."
-      sleep 3600
-    done
+  update_backend.sh: "#!/bin/bash\n#\n# A simple shell script to configure the health
+    checks by using gcloud.\nset -x \n[ -z ${NAMESPACE} ] && echo Error NAMESPACE
+    must be set && exit 1\n[ -z ${SERVICE} ] && echo Error SERVICE must be set &&
+    exit 1\n[ -z ${INGRESS_NAME} ] && echo Error INGRESS_NAME must be set && exit
+    1\n\nPROJECT=$(curl -s -H \"Metadata-Flavor: Google\" http://metadata.google.internal/computeMetadata/v1/project/project-id)\nif
+    [ -z ${PROJECT} ]; then\n  echo Error unable to fetch PROJECT from compute metadata\n
+    \ exit 1\nfi\n\nset_health_check() {\n  # Activate the service account, allow
+    5 retries\n  if [[ ! -z \"${GOOGLE_APPLICATION_CREDENTIALS}\" ]]; then\n    #
+    TODO(jlewi): As of 0.7 we should always be using workload identity. We can remove
+    it post 0.7.0 once we have workload identity\n    # fully working\n    # Activate
+    the service account, allow 5 retries\n    for i in {1..5}; do gcloud auth activate-service-account
+    --key-file=${GOOGLE_APPLICATION_CREDENTIALS} && break || sleep 10; done\n  fi
+    \     \n\n  # For debugging print out what account we are using\n  gcloud auth
+    list\n\n  NODE_PORT=$(kubectl --namespace=${NAMESPACE} get svc ${SERVICE} -o jsonpath='{.spec.ports[0].nodePort}')\n
+    \ echo node port is ${NODE_PORT}\n\n  while [[ -z ${BACKEND_NAME} ]]; do\n    BACKENDS=$(kubectl
+    --namespace=${NAMESPACE} get ingress ${INGRESS_NAME} -o jsonpath='{.metadata.annotations.ingress\\.kubernetes\\.io/backends}')\n
+    \   echo \"fetching backends info with ${INGRESS_NAME}: ${BACKENDS}\"\n    BACKEND_NAME=$(echo
+    $BACKENDS | grep -o \"k8s-be-${NODE_PORT}--[0-9a-z]\\+\")\n    echo \"backend
+    name is ${BACKEND_NAME}\"\n    sleep 2\n  done\n\n  while [[ -z ${BACKEND_SERVICE}
+    ]];\n  do BACKEND_SERVICE=$(gcloud --project=${PROJECT} compute backend-services
+    list --filter=name~k8s-be-${NODE_PORT}- --uri);\n  echo \"Waiting for the backend-services
+    resource PROJECT=${PROJECT} NODEPORT=${NODE_PORT} SERVICE=${SERVICE}...\";\n  sleep
+    2;\n  done\n\n  while [[ -z ${HEALTH_CHECK_URI} ]];\n  do HEALTH_CHECK_URI=$(gcloud
+    compute --project=${PROJECT} health-checks list --filter=name~${BACKEND_NAME}
+    --uri);\n  echo \"Waiting for the healthcheck resource PROJECT=${PROJECT} NODEPORT=${NODE_PORT}
+    SERVICE=${SERVICE}...\";\n  sleep 2;\n  done\n\n  echo health check URI is ${HEALTH_CHECK_URI}\n\n
+    \ # Since we create the envoy-ingress ingress object before creating the envoy\n
+    \ # deployment object, healthcheck will not be configured correctly in the GCP\n
+    \ # load balancer. It will default the healthcheck request path to a value of\n
+    \ # / instead of the intended /healthz.\n  # Manually update the healthcheck request
+    path to /healthz\n  if [[ ${HEALTHCHECK_PATH} ]]; then\n    echo Running health
+    checks update ${HEALTH_CHECK_URI} with ${HEALTHCHECK_PATH}\n    gcloud --project=${PROJECT}
+    compute health-checks update http ${HEALTH_CHECK_URI} --request-path=${HEALTHCHECK_PATH}\n
+    \ else\n    echo Running health checks update ${HEALTH_CHECK_URI} with /healthz\n
+    \   gcloud --project=${PROJECT} compute health-checks update http ${HEALTH_CHECK_URI}
+    --request-path=/healthz\n  fi\n\n  if [[ ${USE_ISTIO} ]]; then\n    # Create the
+    route so healthcheck can pass\n    kubectl apply -f /var/envoy-config/healthcheck_route.yaml\n
+    \ fi\n}\n\nwhile true; do\n  set_health_check\n  echo \"Backend updated successfully.
+    Waiting 1 hour before updating again.\"\n  sleep 3600\ndone\n"
 kind: ConfigMap
 metadata:
   name: envoy-config
@@ -109,4 +72,3 @@ metadata:
   labels:
     ksonnet.io/component: basic-auth-ingress
   name: ingress-bootstrap-config
----

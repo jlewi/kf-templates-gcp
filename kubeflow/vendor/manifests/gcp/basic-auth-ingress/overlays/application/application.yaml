@@ -23,8 +23,8 @@ spec:
     maintainers: []
     owners: []
     keywords:
-     - basic-auth-ingress
-     - kubeflow
+    - basic-auth-ingress
+    - kubeflow
     links:
     - description: About
       url: ""

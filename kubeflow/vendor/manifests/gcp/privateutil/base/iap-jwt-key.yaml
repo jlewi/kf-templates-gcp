@@ -71,19 +71,19 @@ spec:
         service: pubkey
     spec:
       containers:
-        - command:
-          - /pub-key-server
-          image: gcr.io/kubeflow-images-public/jwtpubkey:v20200311-v0.7.0-rc.5-109-g641fb40b-dirty-eb1cdc
-          name: pubkey
-          volumeMounts:
-            - mountPath: /var/pubkey/
-              name: config-volume
+      - command:
+        - /pub-key-server
+        image: gcr.io/kubeflow-images-public/jwtpubkey:v20200311-v0.7.0-rc.5-109-g641fb40b-dirty-eb1cdc
+        name: pubkey
+        volumeMounts:
+        - mountPath: /var/pubkey/
+          name: config-volume
       restartPolicy: Always
       serviceAccountName: kf-admin
       volumes:
-        - configMap:
-            name: pubkey
-          name: config-volume
+      - configMap:
+          name: pubkey
+        name: config-volume
 ---
 apiVersion: v1
 kind: Service
@@ -92,6 +92,6 @@ metadata:
   namespace: istio-system
 spec:
   ports:
-    - port: 8087
+  - port: 8087
   selector:
     service: pubkey
