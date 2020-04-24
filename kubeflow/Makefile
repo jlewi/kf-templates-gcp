@@ -2,22 +2,25 @@
 # These can be read using yq from the settings file.
 #
 # If you don't have yq 
-MGMTCTXT=$(shell yq r ./settings.yaml mgmt-ctxt)
+MGMTCTXT=$(shell yq r ./overlays/settings.yaml mgmt-ctxt)
 # The name of the context for your Kubeflow cluster
-NAME=$(shell yq r ./settings.yaml name)
+NAME=$(shell yq r ./overlays/settings.yaml name)
 KFCTXT=$(NAME)
 
 # Path to kustomize directories
-GCP_CONFIG=gcp_config
-KF_DIR=kustomize
+GCP_CONFIG=./overlays/gcp_config
+KF_DIR=./overlays/kustomize
 
 APP_DIR=.
-MANIFESTS_DIR=../manifests
+MANIFESTS_DIR=./vendor/manifests
 
 # TODO(https://github.com/GoogleContainerTools/kpt/issues/539): 
 # Using a subdirectory fo the current directory breaks our ability to run kpt set .
 # So as a hack we use a $(BUILD_DIR)/ directory in the parent directory.
-BUILD_DIR=../.build-kubeflow
+BUILD_DIR=.build
+
+# The URL you want to fetch manifests from
+MANIFESTS_URL=https://github.com/jlewi/manifests.git@blueprints
 
 # Print out the context
 .PHONY: echo
@@ -37,7 +40,7 @@ get-pkg:
 	# So if we check it out as a subdirectory of ${CWD} then 
 	# ktp cfg {CWD} set ....
 	# won't work. Hopefully this can be fixed in the future.
-	kpt pkg get https://github.com/jlewi/manifests.git@blueprints_pr ../
+	kpt pkg get $(MANIFESTS_URL) ./vendor
 	rm -rf $(MANIFESTS_DIR)/tests
 	# TODO(jlewi): Package appears to cause problems for kpt. We should delete in the upstream
 	# since its not needed anymore.
