@@ -51,7 +51,7 @@ one if you haven't already.
   * This generates an error per [GoogleContainerTools/kpt#539](https://github.com/GoogleContainerTools/kpt/issues/539) but it looks like
     this can be ignored.
 
-## Configure Kubeflow
+## Deploy Kubeflow
 
 1. Set the name of the KUBECONFIG context for the management cluster; this kubecontext will
    be used to create CNRM resources for your Kubeflow deployment.
@@ -102,99 +102,6 @@ one if you haven't already.
    * TODO(jlewi): Need to figure out what to do about disk for metadata and pipelines when using regional clusters?. Maybe just 
      use Cloud SQL?
 
-## Create the Kubeflow GCP resources
-
-1. Set the name of all CNRM resources in the base kustomize package
-
-   ```      
-   kpt cfg set ../manifests/gcp/v2/cnrm cluster-name ${KFNAME}
-   ```
-
-1. Deploy the GCP resources
-
-   ```
-   make apply-gcp
-   ```
-
-1. Wait for the GKE cluster to be available
-
-1. Create a kubectl config context for the cluster
-
-   ```
-   gcloud --project=${MANAGED_PROJECT} container clusters get-credentials --zone=${ZONE} ${KFNAME}
-   ```
-
-1. Edit the Makefile set `KFCTXT` to the context for the KF cluster. You can get the context by running
-
-   ```
-   kubectl config current-context
-   ```
-TODO(jlewi): Add instructions for deploying using ConfigSync and the management cluster
-
-##  Install Anthos Service Mesh(ASM) on the Kubeflow Cluster 
-
-Install ASM on the newly created kubeflow cluster `KFNAME`
-
-* Connect kubectl to the new kubeflow cluster `KFNAME`
-  
-* [Set credentials and permissions](https://cloud.google.com/service-mesh/docs/gke-install-existing-cluster#set_credentials_and_permissions)
-
-* [Download istioctl released by GCP](https://cloud.google.com/service-mesh/docs/gke-install-existing-cluster#download_the_installation_file)
-
-
-* Enable ASM services
-
-  ```  
-  kpt cfg set asm/asm gcloud.core.project ${MANAGED_PROJECT}
-  anthoscli apply --project=${MANAGED_PROJECT} -f ./asm/asm/project
-  ```
-
-  * **Note** If you get errors about services not found; wait an then retry.
-    * It looks like some of the services require sequential activation and they aren't
-      available immediately after enabling the previous service.
-
-* Configure ASM
-
-  ```
-  kpt cfg set manifests/gcp/v2/asm gcloud.core.project ${MANAGED_PROJECT}
-  kpt cfg set manifests/gcp/v2/asm cluster-name ${KFNAME}
-  kpt cfg set manifests/gcp/v2/asm location ${LOCATION}
-  ```
-
-* Install the ISTIO operator
-
-  ```
-  make apply-asm
-  ```
-
-  * TODO(jlewi): Using anthoscli isn't working yet so we are using istioctl
-
-  * TODO(jlewi): It looks like the operator config in manifests might be a little behind the latest ASM configs
-    https://github.com/GoogleCloudPlatform/anthos-service-mesh-packages/blob/master/asm/cluster/istio-operator.yaml
-
-    * TODO(jlewi): Right now asm is a submodule but we are still using the ISTIO operator in the KF manifests repository.
-    * We use asm submodule to enable the services
-
-## Install Kubeflow Applications
-
-1. Configure the Kubeflow applications
-
-   ```
-   kpt cfg set kustomize gcloud.core.project ${MANAGED_PROJECT}
-   kpt cfg set kustomize name ${KFNAME}
-   ```
-1. Build the manifests
-
-   ```
-   make hydrate
-   ```
-
-1. Apply the manifests
-
-   ```
-   make apply
-   ```
-
 1. Set environment variables with OAuth Client ID and Secret for IAP
 
    ```
@@ -204,8 +111,8 @@ Install ASM on the newly created kubeflow cluster `KFNAME`
 
    * TODO(jlewi): Add link for instructions on creating an OAuth client id
 
-1. Create the IAP secret
+1. Deploy Kubeflow
 
    ```
-   make iap-secret
+   make apply
    ```

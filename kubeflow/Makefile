@@ -37,7 +37,7 @@ get-pkg:
 	# So if we check it out as a subdirectory of ${CWD} then 
 	# ktp cfg {CWD} set ....
 	# won't work. Hopefully this can be fixed in the future.
-	kpt pkg get https://github.com/jlewi/manifests.git@blueprints ../
+	kpt pkg get https://github.com/jlewi/manifests.git@blueprints_pr ../
 	rm -rf $(MANIFESTS_DIR)/tests
 	# TODO(jlewi): Package appears to cause problems for kpt. We should delete in the upstream
 	# since its not needed anymore.
@@ -51,6 +51,8 @@ apply-gcp: hydrate-gcp
 
 .PHONY: apply-asm
 apply-asm: hydrate-asm
+	# We need to apply the CRD definitions first
+	kubectl --context=${KFCTXT} apply --recursive=true -f ./$(BUILD_DIR)/istio/Base/Base.yaml
 	kubectl --context=${KFCTXT} apply --recursive=true -f ./$(BUILD_DIR)/istio/Base
 	# TODO(jlewi): Should we use the newer version in asm/asm
 	# istioctl manifest --context=${KFCTXT} apply -f ./manifests/gcp/v2/asm/istio-operator.yaml 
@@ -72,12 +74,14 @@ apply-kubeflow: hydrate-kubeflow
 	kubectl --context=$(KFCTXT) apply -f ./$(BUILD_DIR)/cert-manager-kube-system-resources	
 	kubectl --context=$(KFCTXT) apply -f ./$(BUILD_DIR)/cert-manager
 	kubectl --context=$(KFCTXT) apply -f ./$(BUILD_DIR)/kubeflow-apps
+	# Create the kubeflow-issuer last to give cert-manager time deploy
+	kubectl --context=$(KFCTXT) apply -f ./$(BUILD_DIR)/kubeflow-issuer
 
 # TODO(jlewi): If we use prune does that give us a complete upgrade solution?
 # TODO(jlewi): Should we insert appropriate wait statements to wait for various services to
 # be available before continuing?
 .PHONY: apply
-apply: clean-build apply-gcp create-ctxt apply-asm apply-kubeflow iap-secret
+apply: clean-build apply-gcp wait-gcp create-ctxt apply-asm apply-kubeflow iap-secret
 
 .PHONY: hydrate-gcp
 hydrate-gcp:
@@ -116,8 +120,9 @@ hydrate-kubeflow:
 	mkdir -p $(BUILD_DIR)/kubeflow-apps
 	kustomize build --load_restrictor none -o $(BUILD_DIR)/kubeflow-istio $(KF_DIR)/kubeflow-istio
 	mkdir -p $(BUILD_DIR)/metacontroller
-	kustomize build --load_restrictor none -o $(BUILD_DIR)/metacontroller $(KF_DIR)/metacontroller
-
+	kustomize build --load_restrictor none -o $(BUILD_DIR)/metacontroller $(KF_DIR)/metacontroller	
+	mkdir -p $(BUILD_DIR)/kubeflow-issuer
+	kustomize build --load_restrictor none -o $(BUILD_DIR)/kubeflow-issuer $(KF_DIR)/kubeflow-issuer
 .PHONY: clean-build
 clean-build:
 	# Delete build because we want to prune any resources which are no longer defined in the manifests

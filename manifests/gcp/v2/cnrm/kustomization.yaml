@@ -1,4 +1,3 @@
-# TODO(jlewi): Include the nodepool?
 resources:
 - cluster.yaml
 - compute-address.yaml

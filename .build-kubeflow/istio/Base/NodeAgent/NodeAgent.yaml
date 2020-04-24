@@ -57,7 +57,7 @@ spec:
       serviceAccountName: istio-nodeagent-service-account
       containers:
         - name: nodeagent
-          image: "gcr.io/asm-testing/node-agent-k8s:1.4.5-asm-test.7"
+          image: "gcr.io/gke-release/asm/node-agent-k8s:1.4.7-asm.0"
           imagePullPolicy: IfNotPresent
           args:
           volumeMounts:
@@ -69,7 +69,7 @@ spec:
             - name: CA_PROVIDER
               value: "GoogleCA"
             - name: GKE_CLUSTER_URL
-              value: "https://container.googleapis.com/v1/projects/jlewi-dev/locations/us-central1/clusters/kf-2020-0423-002"
+              value: "https://container.googleapis.com/v1/projects/jlewi-dev/locations/us-central1/clusters/kf-2020-0423-003"
             - name: PLUGINS
               value: "GoogleTokenExchange"
             - name: VALID_TOKEN

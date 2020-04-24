@@ -577,7 +577,7 @@ spec:
           value: "false"
         - name: PILOT_ENABLE_PROTOCOL_SNIFFING_FOR_INBOUND
           value: "false"
-        image: gcr.io/asm-testing/pilot:1.4.5-asm-test.7
+        image: gcr.io/gke-release/asm/pilot:1.4.7-asm.0
         imagePullPolicy: IfNotPresent
         name: discovery
         ports:
@@ -626,7 +626,7 @@ spec:
               fieldPath: status.podIP
         - name: SDS_ENABLED
           value: "true"
-        image: gcr.io/asm-testing/proxyv2:1.4.5-asm-test.7
+        image: gcr.io/gke-release/asm/proxyv2:1.4.7-asm.0
         imagePullPolicy: IfNotPresent
         name: istio-proxy
         ports:
@@ -878,7 +878,7 @@ spec:
         - --stackdriver.metrics-prefix=container.googleapis.com/internal/addons/istio
         - --config-file=/etc/prometheus-sidecar/sidecar.yml
         - --filter=__name__=~"^(pilot_xds_pushes|pilot_xds_push_timeouts|pilot_errors_xds)$"
-        image: "gcr.io/asm-testing/stackdriver-prometheus-sidecar:1.4.5-asm-test.7"
+        image: "gcr.io/gke-release/asm/stackdriver-prometheus-sidecar:1.4.7-asm.0"
         env:
         - name: DEBUG
           value: "1"
@@ -902,7 +902,7 @@ spec:
         - --storage.tsdb.min-block-duration=15m
         - --storage.tsdb.max-block-duration=4h
         - --config.file=/etc/prometheus/prometheus.yml
-        image: "gcr.io/asm-testing/prometheus:1.4.5-asm-test.7"
+        image: "gcr.io/gke-release/asm/prometheus:1.4.7-asm.0"
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3

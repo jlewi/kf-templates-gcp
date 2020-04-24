@@ -14,22 +14,28 @@
 
 # TODO(kunming): kustomize this config to include all the options we currently offer through DM
 
-# This is the base resource. Values set by kpt setters that are user specific should in general
-# go in the overlay that the user creates. The primary exception should be
-# the name since the name in the overlay needs to match the base package
 apiVersion: container.cnrm.cloud.google.com/v1beta1
 kind: ContainerCluster
 metadata:
-  name: kf-2020-0423-002 # {"type":"string","x-kustomize":{"setter":{"name":"cluster-name","value":"kf-2020-0423-002"}}}
+  clusterName: "jlewi-dev/us-east1-d/kf-2020-0423-003" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"cluster-name","value":"kf-2020-0423-003"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
+  labels:
+    mesh_id: "jlewi-dev_us-east1-d_kf-2020-0423-003" # {"type":"string","x-kustomize":{"setBy":"kpt","partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"},{"name":"cluster-name","value":"kf-2020-0423-003"},{"name":"gcloud.compute.zone","value":"us-east1-d"}]}}
+  name: kf-2020-0423-003 # {"type":"string","x-kustomize":{"setter":{"name":"cluster-name","value":"kf-2020-0423-003"}}}
+  # Namespace should be specified by kustomization.yaml
+  # namespace: "jlewi-dev" # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.core.project","value":"jlewi-dev"}}}
 spec:
   initialNodeCount: 2
+  minMasterVersion: "1.14.10-gke.36"
+  location: us-east1-d # {"type":"string","x-kustomize":{"setBy":"kpt","setter":{"name":"gcloud.compute.zone","value":"us-east1-d"}}}
+  workloadIdentityConfig:
+    identityNamespace: jlewi-dev.svc.id.goog # {"type":"string","x-kustomize":{"partialSetters":[{"name":"gcloud.core.project","value":"jlewi-dev"}]}}
   loggingService: logging.googleapis.com/kubernetes
   monitoringService: monitoring.googleapis.com/kubernetes
   nodeConfig:
     machineType: n1-standard-8
     metadata:
       disable-legacy-endpoints: "true"
+    serviceAccountRef:
+      name: kf-2020-0423-003-vm # {"type":"string","x-kustomize":{"partialSetters":[{"name":"cluster-name","value":"kf-2020-0423-003"}]}}
     workloadMetadataConfig:
       nodeMetadata: GKE_METADATA_SERVER
-  releaseChannel:
-    channel: STABLE

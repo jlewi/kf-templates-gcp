@@ -98,7 +98,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: metadata.namespace
-        image: gcr.io/asm-testing/node-agent-k8s:1.4.5-asm-test.7
+        image: gcr.io/gke-release/asm/node-agent-k8s:1.4.7-asm.0
         imagePullPolicy: IfNotPresent
         name: ingress-sds
         resources:
@@ -174,7 +174,7 @@ spec:
         - name: ISTIO_META_OWNER
           value: kubernetes://apis/apps/v1/namespaces/istio-system/deployments/istio-ingressgateway
         - name: ISTIO_META_MESH_ID
-          value: jlewi-dev_us-central1_kf-2020-0423-002
+          value: jlewi-dev_us-central1_kf-bp-0420-002
         - name: ISTIO_META_POD_NAME
           valueFrom:
             fieldRef:
@@ -188,6 +188,8 @@ spec:
           value: "true"
         - name: ISTIO_META_ROUTER_MODE
           value: sni-dnat
+        - name: GCP_METADATA
+          value: jlewi-dev|147474701642|kf-2020-0423-003|us-central1
         - name: ISTIO_METAJSON_LABELS
           value: |
             {"app":"istio-ingressgateway","istio":"ingressgateway"}
@@ -195,7 +197,7 @@ spec:
           value: Kubernetes
         - name: SDS_ENABLED
           value: "true"
-        image: gcr.io/asm-testing/proxyv2:1.4.5-asm-test.7
+        image: gcr.io/gke-release/asm/proxyv2:1.4.7-asm.0
         imagePullPolicy: IfNotPresent
         name: istio-proxy
         ports:

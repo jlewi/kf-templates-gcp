@@ -424,7 +424,7 @@ spec:
         - --validation.tls.clientCertificate=/etc/dnscerts/cert-chain.pem
         - --validation.tls.privateKey=/etc/dnscerts/key.pem
         - --validation.tls.caCertificates=/etc/dnscerts/root-cert.pem
-        image: gcr.io/asm-testing/galley:1.4.5-asm-test.7
+        image: gcr.io/gke-release/asm/galley:1.4.7-asm.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:
@@ -490,7 +490,7 @@ spec:
               fieldPath: status.podIP
         - name: SDS_ENABLED
           value: "true"
-        image: gcr.io/asm-testing/proxyv2:1.4.5-asm-test.7
+        image: gcr.io/gke-release/asm/proxyv2:1.4.7-asm.0
         imagePullPolicy: IfNotPresent
         name: istio-proxy
         ports:
