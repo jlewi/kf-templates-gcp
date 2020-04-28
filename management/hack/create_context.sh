@@ -29,4 +29,4 @@ gcloud --project=${PROJECT} container clusters get-credentials \
 kubectl config rename-context $(kubectl config current-context) ${NAME}
 
 # Set the namespace to the host project
-kubectl config set-context --current --namespace=default
+kubectl config set-context --current --namespace=cnrm-system
