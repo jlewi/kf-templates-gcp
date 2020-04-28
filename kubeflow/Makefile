@@ -2,17 +2,17 @@
 # These can be read using yq from the settings file.
 #
 # If you don't have yq 
-MGMTCTXT=$(shell yq r ./overlays/settings.yaml mgmt-ctxt)
+MGMTCTXT=$(shell yq r ./instance/settings.yaml mgmt-ctxt)
 # The name of the context for your Kubeflow cluster
-NAME=$(shell yq r ./overlays/settings.yaml name)
+NAME=$(shell yq r ./instance/settings.yaml name)
 KFCTXT=$(NAME)
 
 # Path to kustomize directories
-GCP_CONFIG=./overlays/gcp_config
-KF_DIR=./overlays/kustomize
+GCP_CONFIG=./instance/gcp_config
+KF_DIR=./instance/kustomize
 
 APP_DIR=.
-MANIFESTS_DIR=./vendor/manifests
+MANIFESTS_DIR=./upstream/manifests
 
 # TODO(https://github.com/GoogleContainerTools/kpt/issues/539): 
 # Using a subdirectory fo the current directory breaks our ability to run kpt set .
@@ -29,13 +29,14 @@ echo-ctxt:
 	@echo KFCTXT=$(KFCTXT)
 
 # Get packages
-.PHONY: hydrate
+.PHONY: get-packages
 get-pkg:
 	# TODO(jlewi): We should switch to using upstream kubeflow/manifests and pin
 	# to a specific version
 	# TODO(jlewi): We should think about how we layout packages in kubeflow/manifests so
 	# users don't end up pulling tests or other things they don't need.
-	kpt pkg get $(MANIFESTS_URL) ./vendor
+	mkdir -p  ./upstream
+	kpt pkg get $(MANIFESTS_URL) $(MANIFESTS_DIR)
 	rm -rf $(MANIFESTS_DIR)/tests
 	# TODO(jlewi): Package appears to cause problems for kpt. We should delete in the upstream
 	# since its not needed anymore.
@@ -144,15 +145,15 @@ check-iap:
 iap-secret: check-iap
 	kubectl --context=$(KFCTXT) -n istio-system create secret generic kubeflow-oauth --from-literal=client_id=${CLIENT_ID} --from-literal=client_secret=${CLIENT_SECRET}
 
-.PHONE: wait-gcp	
+.PHONY: wait-gcp
 wait-gcp:
 	kubectl --context=$(MGMTCTXT) wait --for=condition=Ready --timeout=600s  containercluster $(NAME)
 
 # Create a kubeconfig context for the kubeflow cluster
-.PHONE: create-cnrm-ctxt
+.PHONY: create-ctxt
 create-ctxt:
-	PROJECT=$(shell yq r ./overlays/settings.yaml project) \
-	   REGION=$(shell yq r ./overlays/settings.yaml location) \
+	PROJECT=$(shell yq r ./instance/settings.yaml project) \
+	   REGION=$(shell yq r ./instance/settings.yaml location) \
 	   NAME=$(NAME) ./hack/create_context.sh
 
 # Delete gcp resources

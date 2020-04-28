@@ -1,4 +1,0 @@
-bases:
-- cluster/
-- configsync/
-- cnrm/

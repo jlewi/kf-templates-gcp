@@ -21,33 +21,57 @@ to manage GCP infrastructure using GitOps.
 
 ## Setting up the management cluster
 
-TODO(jlewi): Instructions below need a bit of updating; the predate some of the move to kpt packages
 
-1. Fetch the config files
-
-   ```
-   kpt pkg get https://github.com/jlewi/kf-templates-gcp.git/management@master ./
-   ```
-
-   * TODO(jlewi): Change to a Kubeflow repo once its in kubeflow.
-
-1. Set the name for the management resources in the base kustomize package
+1. Fetch the management blueprint
 
    ```
-   kpt cfg set ../manifests/gcp/v2/management/ cluster-name $(MGMT_NAME)   
+   kpt pkg get https://github.com/kubeflow/gcp-blueprints.git/management@master ./
    ```
 
-1. Set the same names in the kustomize package defining overlays
+1. Fetch the upstream manifests
 
    ```
-   cd ${REPO}/management
+   cd ./management
+   make get-pkg
+   ```
+
+   * TODO(jlewi): This is giving an error like the one below but this can be ignored
+
+    ```
+    kpt pkg get https://github.com/jlewi/manifests.git@blueprints ./upstream
+    fetching package / from https://github.com/jlewi/manifests to upstream/manifests
+    Error: resources must be annotated with config.kubernetes.io/index to be written to files
+    ```
+
+1. Pick a name for the management cluster
+
+   ```
+   export MGMT_NAME=<some name>
+   ```
+
+1. Pick a location for the Kubeflow deployment
+
+   ```
+   export LOCATION=<zone or region>
+   export PROJECT=<project>   
+   ```
+
+1. Set the name for the management resources in the upstream kustomize package
+
+   ```
+   kpt cfg set ./upstream name $(MGMT_NAME)   
+   ```
+
+1. Set the same names in the instance kustomize package defining patches
+
+   ```   
    
-   kpt cfg set . cluster-name $(MGMT_NAME)   
-   kpt cfg set . gcloud.compute.zone $(MGMT_ZONE)
-   kpt cfg set . gcloud.core.project $(MGMT_PROJECT)   
+   kpt cfg set ./instance name $(MGMT_NAME)   
+   kpt cfg set ./instance location $(LOCATION)
+   kpt cfg set ./instance gcloud.core.project $(PROJECT)   
    ```
 
-   * This directory defines kustomize overlays applied to `manifests/gcp/v2/management`
+   * This directory defines kustomize overlays applied to `upstream/management`
 
    * The names of the CNRM resources need to be set in both the base 
      package and the overlays
@@ -61,16 +85,8 @@ TODO(jlewi): Instructions below need a bit of updating; the predate some of the 
 1. Create a kubeconfig context for the cluster
 
    ```
-   gcloud --project=${PROJECT} container clusters get-credentials --region=${REGION} ${MGMT_ZONE}
+   make create-ctxt
    ```
-
-1. Get the current context
-
-   ```
-   kubectl config current-context
-   ```
-
-1. Set MGMTCTXT in the Makefiles
 
 1. Install the CNRM system components
 
